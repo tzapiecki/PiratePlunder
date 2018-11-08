@@ -15,11 +15,11 @@ python3 -m venv venv
 ```
 You should now see `(venv)` before each line of your command line prompt.  
 
-3. With your virtual environment activated, make sure to install flask:
+3. With your virtual environment activated, install flask
 ```
 pip install flask
 ```
-That's it! Make sure to run `. ./venv/bin/activate` in the `PiratePlunder` directory whenever you want to start up the server.
+That's it! Remember to always activate your virtual environment with `. ./venv/bin/activate` in the `PiratePlunder` directory before you start the server.
 
 ## Playing the game
 1. In the `PiratePlunder` directory, with the virtual environment activated, start up the server
@@ -28,7 +28,7 @@ python3 server.py
 ```
 Go to the url it lists, grab a friend, and start playing!  
 
-Note: in the terminal window where you started the server, you can quit at any time by entering `Ctrl + C`
+Note: in the terminal window where you started the server, you can shut down the server at any time by entering `Ctrl + C`
 
 ## Project structure
 TODO
