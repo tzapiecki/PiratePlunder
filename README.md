@@ -15,10 +15,20 @@ python3 -m venv venv
 ```
 You should now see `(venv)` before each line of your command line prompt.  
 
-3. With your virtual environment activated, install flask
+3. With your virtual environment activated, install flask and socketio
 ```
 pip install flask
+pip install flask-socketio
 ```
+NOTE: When you install socketio, you may need to include the `--user` flag. For those unfamiliar with flags, you just need to enter 
+```
+pip install flask-socketio --user
+``` 
+instead of 
+```
+pip install flask-socketio
+```
+
 That's it! Remember to always activate your virtual environment with `. ./venv/bin/activate` in the `PiratePlunder` directory before you start the server.
 
 ## Playing the game
