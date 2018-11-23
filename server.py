@@ -1,6 +1,9 @@
 from flask import Flask, render_template, make_response, jsonify, request
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__, static_url_path='')
+# TODO: may need to add secret key
+socketio = SocketIO(app)
 
 
 """
@@ -78,4 +81,13 @@ def handle_input(lobby_id, action_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+
+    print("\n * App running with SocketIO")
+    print(" * Should be accessible on http://127.0.0.1:5000\n")
+    socketio.run(app)
+
+
+
+
+
+
