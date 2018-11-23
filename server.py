@@ -7,7 +7,7 @@ Routes designed by Gabriel Brown
 
 from flask import Flask, render_template, make_response, jsonify, request
 from flask_socketio import SocketIO, emit
-import socketio_events
+import events
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
@@ -67,10 +67,10 @@ def task_failed(lobby_id, task_id):
 
     # When socketio.emit() is used rather than just emit() under
     # a socketio decorater, it's assumed to broadcast to everyone connected
-    
+
     # Since there could be multiple lobbies at once, I'm including the lobby_id
     # in the data sent with the event so that different lobbies won't get conflicting results
-    socketio.emit(socketio_events.TASK_FAILED, { "lobby_id": lobby_id, "task_id": task_id })
+    socketio.emit(events.TASK_FAILED, { "lobby_id": lobby_id, "task_id": task_id })
 
     # TODO: generate a new task and return that as a json response
     # (the user who failed the task should send the request to this URL,
