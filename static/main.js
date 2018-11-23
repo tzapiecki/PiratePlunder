@@ -9,10 +9,10 @@ var mainState = {
         this.game.load.image('background', 'assets/dawn-sky-bird-875858.jpg');
     },
 
+
     create: function() {
         sky = this.game.add.sprite(0, 0, 800, 600, 'background');
         backgroundv = 2;
-
 
     },
 
@@ -25,3 +25,4 @@ var mainState = {
 
 game.state.add("mainState", mainState);
 game.state.start("mainState");
+
