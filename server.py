@@ -62,8 +62,15 @@ Routes to pass around information
 @app.route('/game/<lobby_id>/failed/<task_id>')
 def task_failed(lobby_id, task_id):
 
-    # TODO: emit a socket.io event that tells each user that a task
+    # emit a socket.io event that tells each user that a task
     # was failed (and to damage the ship, etc etc)
+
+    # When socketio.emit() is used rather than just emit() under
+    # a socketio decorater, it's assumed to broadcast to everyone connected
+    
+    # Since there could be multiple lobbies at once, I'm including the lobby_id
+    # in the data sent with the event so that different lobbies won't get conflicting results
+    socketio.emit(socketio_events.TASK_FAILED, { "lobby_id": lobby_id, "task_id": task_id })
 
     # TODO: generate a new task and return that as a json response
     # (the user who failed the task should send the request to this URL,

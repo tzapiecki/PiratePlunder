@@ -4,6 +4,15 @@ A bunch of constants holding the string names of different socketio events.
 Written by Gabriel Brown
 """
 
+""" Lobby events """
+
+# emitted by server when there are at least two clients in lobby 
+# and everyone has readied up
+GAME_START = "game_start"
+
+
+""" In-game events """
+
 # emitted by server when client input results in a completed task
 TASK_COMPLETE = "task_complete"
 
