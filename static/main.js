@@ -1,22 +1,24 @@
 
-var game = new Phaser.Game(800, 600, Phaser.WEBGL, 'gameDiv');
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'gameDiv');
+
+var sky;
+var backgroundv;
 
 var mainState = {
     preload: function(){
-        
+        this.game.load.image('background', 'assets/dawn-sky-bird-875858.jpg');
     },
 
-<<<<<<< HEAD
     create: function() {
-=======
-    game.load.image('sky', 'assets/skies/sky.png');
-    game.load.image('dragonTexture', 'assets/creature/dragon.png');
-    game.load.json('dragonMesh', 'assets/creature/dragon.json');
->>>>>>> 8a86c301519c9319c49fe4a5b7154a845497af73
+        sky = this.game.add.sprite(0, 0, 800, 600, 'background');
+        backgroundv = 2;
+
 
     },
 
     update:function() {
+
+        sky.tilePosition.y += backgroundv;
 
     }
 }
