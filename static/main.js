@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.WEBGL, 'phaser-example', { preload: 
 
 function preload() {
 
-    game.load.image('sky', 'assets/skies/deepblue.png');
+    game.load.image('sky', 'assets/skies/sky.png');
     game.load.image('dragonTexture', 'assets/creature/dragon.png');
     game.load.json('dragonMesh', 'assets/creature/dragon.json');
 
