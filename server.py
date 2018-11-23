@@ -1,5 +1,13 @@
+"""
+A flask server that emits asynchronous events to clients
+using SocketIO
+
+Routes designed by Gabriel Brown
+"""
+
 from flask import Flask, render_template, make_response, jsonify, request
 from flask_socketio import SocketIO, emit
+import socketio_events
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
@@ -82,9 +90,11 @@ def handle_input(lobby_id, action_id):
 
 if __name__ == '__main__':
 
-    print("\n * App running with SocketIO")
-    print(" * Should be accessible on http://127.0.0.1:5000\n")
-    socketio.run(app)
+    # TODO: uncomment the lines below when not running with debug mode,
+    # so you can at least get some feedback that the app has started
+    # print("\n * App running with SocketIO")
+    # print(" * Should be accessible on http://127.0.0.1:5000\n")
+    socketio.run(app, debug=True)
 
 
 
