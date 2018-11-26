@@ -3,16 +3,81 @@
     <head>
         <meta charset="UTF-8">
         <title>Pirate Plunder</title>
-        <script src="./packages/phaser.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet"> 
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            form {
+                margin-top: 6rem;
+            }
+            #title {
+                margin: 2rem 0;
+            }
+            #title label {
+                display: block;
+                font-family: 'Luckiest Guy', cursive;
+                font-size: 8rem;
+                text-align: center;
+                height: 0.8em;
+            }
+            div p {
+                font-family: 'Signika', sans-serif;
+                font-size: 2rem;
+                text-align: center;
+            }
+            #roomCode {
+                font-family: 'Sedgwick Ave', cursive;
+                font-size: 3rem;
+                height: 3rem;
+                width: 27rem;
+                padding-top: 0.6rem;
+                text-align: center;
+                display: block;
+                margin: auto;
+                border: 6px solid black;
+            }
+            #submitButton {
+                font-family: 'Signika', sans-serif;
+                font-size: 2rem;
+                display: block;
+                margin: auto;
+                margin-top: 1rem;
+            }
+        </style>
     </head>
     <body>
-        <p>Welcome to Pirate Plunder arrrrrrrrr!</p>
+        <div id="title">
+            <label>Pirate</label>
+            <label>Plunder</label>
+        </div>
+        <div>
+            <p>Enter a room code for your team</p>
+            <input id="roomCode" type="text" placeholder="Room Code">
+            <button id="submitButton">Join Lobby</button>
+        </div>
 
-        <a href="/lobby/5">Link to lobby page</a>
         <script>
-            if (typeof Phaser !== "undefined") {
-                alert("Phaser exists!");
+            var checkRoomCodeValidity = function () {
+                if (document.getElementById('roomCode').value.length > 0) {
+                    document.getElementById('submitButton').disabled = false;
+                }
+                else {
+                    document.getElementById('submitButton').disabled = true;
+                }
             }
+            document.getElementById('roomCode').onchange = checkRoomCodeValidity;
+
+            document.getElementById('submitButton').onclick = function () {
+                let lobbyID = encodeURIComponent(document.getElementById('roomCode').value);
+                if (lobbyID.length > 0) {
+                    window.location.href = "/lobby/" + lobbyID;
+                }
+            };
+
+            checkRoomCodeValidity();
         </script>
     </body>
 </html>
