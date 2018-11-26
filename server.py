@@ -8,11 +8,16 @@ Routes designed by Gabriel Brown
 from flask import Flask, render_template, make_response, jsonify, request
 from flask_socketio import SocketIO, emit
 import events
+import lobby
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
 socketio = SocketIO(app)
 
+"""
+Global variables
+"""
+lobbies = {}   # Key: lobby_id, Value: lobby object
 
 """
 Routes to new pages
