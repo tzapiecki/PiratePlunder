@@ -8,7 +8,7 @@ Routes designed by Gabriel Brown
 from flask import Flask, render_template, make_response, jsonify, request
 from flask_socketio import SocketIO, emit
 import events
-import lobby
+from lobby import Lobby
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
@@ -53,6 +53,26 @@ def lobby(lobby_id):
 
     # If loading lobby page for first time
     else:
+
+        # TODO: make it so that refreshing the page doesn't add new players to the lobby
+        # probably easiest to do with cookies. Not important for MVP, but would be good to do later
+
+
+        # Make new Lobby object if need be, otherwise use old one
+        lobby = lobbies.get(lobby_id, "no_lobby")
+
+        if(lobby == "no_lobby"):
+
+            lobby = Lobby(lobby_id)
+            lobbies[lobby_id] = lobby
+
+            print("NEW LOBBY MADE - id: " + lobby_id)
+
+        
+        lobby.add_player()
+        print("Lobby_id: " + lobby_id + "\nNum players: " + str(lobby.numPlayers))
+
+
         return render_template("lobby.html", lobby_id=lobby_id)
 
 @app.route('/game/<lobby_id>')
