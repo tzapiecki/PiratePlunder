@@ -29,10 +29,12 @@
             // Load & Define our game assets
             this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
             this.load.image('sky', "bg.png");
+            this.load.image('ship',"ship.png")
         };
 
         function create () {
             this.add.sprite(0, 0, 'sky');
+            this.add.sprite(350,225,'ship');
         };
 
         function update (time, delta) {
