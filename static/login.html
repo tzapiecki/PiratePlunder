@@ -55,23 +55,26 @@
         </div>
         <div>
             <p>Enter a room code for your team</p>
-            <input id="roomCode" type="text" placeholder="Room Code">
+            <input id="roomCode" type="text" placeholder="Room Code" maxlength="25">
             <button id="submitButton">Join Lobby</button>
         </div>
 
         <script>
+            var roomCodeInput = document.getElementById('roomCode'),
+                submitButton = document.getElementById('submitButton');
+
             var checkRoomCodeValidity = function () {
-                if (document.getElementById('roomCode').value.length > 0) {
-                    document.getElementById('submitButton').disabled = false;
+                if (roomCodeInput.value.trim().length > 0) {
+                    submitButton.disabled = false;
                 }
                 else {
-                    document.getElementById('submitButton').disabled = true;
+                    submitButton.disabled = true;
                 }
             }
-            document.getElementById('roomCode').onchange = checkRoomCodeValidity;
+            roomCodeInput.onchange = checkRoomCodeValidity;
 
-            document.getElementById('submitButton').onclick = function () {
-                let lobbyID = encodeURIComponent(document.getElementById('roomCode').value);
+            submitButton.onclick = function () {
+                let lobbyID = encodeURIComponent(roomCodeInput.value.trim());
                 if (lobbyID.length > 0) {
                     window.location.href = "/lobby/" + lobbyID;
                 }
