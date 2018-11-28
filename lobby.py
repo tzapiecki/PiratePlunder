@@ -11,6 +11,11 @@ class Lobby:
         self.numPlayers = 0
         self.numReadyPlayers = 0
 
+    def __str__(self):
+        """Prints out info about lobby"""
+
+        return "Lobby_id: " + self.lobby_id + "\nNum players: " + str(self.numPlayers) + "\nNum ready players: " + str(self.numReadyPlayers)
+
 
     def add_player(self):
 

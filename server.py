@@ -35,6 +35,8 @@ def lobby(lobby_id):
 
         status = request.args.get("status", "none")
 
+        print("\n==============\n LOBBY UPDATE \n==============\n")
+
         if status == "ready":
 
             # update lobby object and emit a socket.io event to  
@@ -44,10 +46,12 @@ def lobby(lobby_id):
             lobby = lobbies[lobby_id]
             lobby.add_ready_player()
 
+            print(str(lobby) + "\n")
+
             if lobby.is_ready():
 
                 # TODO: assign and pass in tasks to each person
-                print("=====================\n Socket event emitted \n=====================\n")
+                print("\n==============\n GAME STARTED \n==============\n")
                 socketio.emit(events.GAME_START)
 
             return make_response()
@@ -75,12 +79,11 @@ def lobby(lobby_id):
             lobby = Lobby(lobby_id)
             lobbies[lobby_id] = lobby
 
-            print("NEW LOBBY MADE - id: " + lobby_id)
+            print("\n================\n NEW LOBBY MADE \n================\n")
 
         
         lobby.add_player()
-        print("Lobby_id: " + lobby_id + "\nNum players: " + str(lobby.numPlayers))
-        print("Num ready players: " + str(lobby.numReadyPlayers))
+        print(str(lobby) + "\n")
 
         # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 
