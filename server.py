@@ -37,7 +37,7 @@ def lobby(lobby_id):
 
         if status == "ready":
 
-            # TODO: update lobby object and emit a socket.io event to  
+            # update lobby object and emit a socket.io event to  
             # tell all players to load the game page if
             # there are 2+ players in the lobby and all are ready
 
@@ -51,10 +51,7 @@ def lobby(lobby_id):
 
         elif status == "unready":
 
-            # TODO: update lobby object
-            
-            # this is here to make everything compile even though we have no implementation yet
-            makePythonCompile = True 
+            lobbies[lobby_id].remove_ready_player()
 
 
     # If loading lobby page for first time
