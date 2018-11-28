@@ -9,6 +9,7 @@
             * {
                 margin: 0;
                 padding: 0;
+                background-color: #fdab5e;
             }
             form {
                 margin-top: 6rem;
@@ -22,29 +23,56 @@
                 font-size: 8rem;
                 text-align: center;
                 height: 0.8em;
+                text-shadow: 0 0 30px #ffffff;
             }
             div p {
                 font-family: 'Signika', sans-serif;
                 font-size: 2rem;
                 text-align: center;
+                color: #111111;
             }
             #roomCode {
                 font-family: 'Sedgwick Ave', cursive;
                 font-size: 3rem;
-                height: 3rem;
+                height: 4.75rem;
                 width: 27rem;
-                padding-top: 0.6rem;
                 text-align: center;
                 display: block;
                 margin: auto;
-                border: 6px solid black;
+                background-color: #353535;
+                border: none;
+                border-radius: 3px;
+                color: white;
+            }
+            #roomCode::placeholder {
+                color: #a4a4b3;
+                opacity: 1;
             }
             #submitButton {
                 font-family: 'Signika', sans-serif;
-                font-size: 2rem;
+                font-weight: bold;
+                color: #ffffff;
+                font-size: 3rem;
                 display: block;
                 margin: auto;
                 margin-top: 1rem;
+                padding: 1rem;
+                border: none;
+                border-radius: 1rem;
+                background-color: #1b3aa1;
+                cursor: pointer;
+                box-shadow: 0 0 3px 0px #333333;
+            }
+            #submitButton:hover {
+                box-shadow: 0 0 3px 3px #ffffff;
+            }
+            #submitButton:disabled {
+                color: #808080;
+                background-color: #f0f0f0;
+                cursor: default;
+            }
+            #submitButton:hover:disabled {
+                box-shadow: 0 0 3px 0px #333333;
             }
         </style>
     </head>
@@ -64,7 +92,7 @@
                 submitButton = document.getElementById('submitButton');
 
             var checkRoomCodeValidity = function () {
-                if (roomCodeInput.value.trim().length > 0) {
+                if (roomCodeInput.value.trim().length > 0){
                     submitButton.disabled = false;
                 }
                 else {
@@ -72,6 +100,9 @@
                 }
             }
             roomCodeInput.onchange = checkRoomCodeValidity;
+            roomCodeInput.onkeydown = checkRoomCodeValidity;
+            roomCodeInput.onkeyup = checkRoomCodeValidity;
+            roomCodeInput.onpaste = checkRoomCodeValidity;
 
             submitButton.onclick = function () {
                 let lobbyID = encodeURIComponent(roomCodeInput.value.trim());
