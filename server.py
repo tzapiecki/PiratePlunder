@@ -18,6 +18,7 @@ socketio = SocketIO(app)
 Global variables
 """
 lobbies = {}   # Key: lobby_id, Value: lobby object
+tasks = [] 
 
 """
 Routes to new pages
@@ -40,8 +41,13 @@ def lobby(lobby_id):
             # tell all players to load the game page if
             # there are 2+ players in the lobby and all are ready
 
-            # this is here to make everything compile even though we have no implementation yet
-            makePythonCompile = True 
+            lobby = lobbies[lobby_id]
+            lobby.add_ready_player()
+
+            if lobby.is_ready():
+
+                # TODO: assign and pass in tasks to each person
+                socketio.emit(events.GAME_START)
 
         elif status == "unready":
 
@@ -72,6 +78,7 @@ def lobby(lobby_id):
         lobby.add_player()
         print("Lobby_id: " + lobby_id + "\nNum players: " + str(lobby.numPlayers))
 
+        # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 
         return render_template("lobby.html", lobby_id=lobby_id)
 
