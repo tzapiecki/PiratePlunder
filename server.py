@@ -27,7 +27,7 @@ Routes to new pages
 def index():
     return app.send_static_file('login.html')
 
-@app.route('/lobby/<lobby_id>')
+@app.route('/lobby/<lobby_id>', methods=['GET', 'POST'])
 def lobby(lobby_id):
 
     # If player is sending a status update
@@ -47,11 +47,17 @@ def lobby(lobby_id):
             if lobby.is_ready():
 
                 # TODO: assign and pass in tasks to each person
+                print("=====================\n Socket event emitted \n=====================\n")
                 socketio.emit(events.GAME_START)
+
+            return make_response()
+
 
         elif status == "unready":
 
             lobbies[lobby_id].remove_ready_player()
+
+            return make_response()
 
 
     # If loading lobby page for first time
@@ -74,6 +80,7 @@ def lobby(lobby_id):
         
         lobby.add_player()
         print("Lobby_id: " + lobby_id + "\nNum players: " + str(lobby.numPlayers))
+        print("Num ready players: " + str(lobby.numReadyPlayers))
 
         # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 
