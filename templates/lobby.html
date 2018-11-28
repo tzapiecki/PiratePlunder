@@ -19,6 +19,13 @@
                 socket.emit('my event', {data: 'I\'m connected!'});
                 console.log('Connected!');
             });
+
+            // Handle game start event
+            socket.on('game_start', function(serverData) {
+
+                window.location.href = "/game/{{lobby_id}}"
+            });
+
         </script>
     </head>
 
@@ -26,6 +33,6 @@
         <button onclick="window.history.back()">&lt;-</button>
 
         <h1>{{ lobby_id }}</h1>
-        <button onclick="$.ajax({url: window.location.href + '?status=ready'})">READY UP</button>
+        <button onclick="$.ajax({url: window.location.href + '?status=ready', method: 'POST'})">READY UP</button>
     </body>
 </html>
