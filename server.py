@@ -35,6 +35,8 @@ def lobby(lobby_id):
 
         status = request.args.get("status", "none")
 
+        print("\n==============\n LOBBY UPDATE \n==============\n")
+
         if status == "ready":
 
             # update lobby object and emit a socket.io event to  
@@ -44,10 +46,12 @@ def lobby(lobby_id):
             lobby = lobbies[lobby_id]
             lobby.add_ready_player()
 
+            print(str(lobby) + "\n")
+
             if lobby.is_ready():
 
                 # TODO: assign and pass in tasks to each person
-                print("=====================\n Socket event emitted \n=====================\n")
+                print("\n==============\n GAME STARTED \n==============\n")
                 socketio.emit(events.GAME_START)
 
             return make_response()
@@ -63,24 +67,29 @@ def lobby(lobby_id):
     # If loading lobby page for first time
     else:
 
-        # TODO: make it so that refreshing the page doesn't add new players to the lobby
-        # probably easiest to do with cookies. Not important for MVP, but would be good to do later
-
-
         # Make new Lobby object if need be, otherwise use old one
         lobby = lobbies.get(lobby_id, "no_lobby")
 
+        # If no lobby object with that id found, make a new one
         if(lobby == "no_lobby"):
 
             lobby = Lobby(lobby_id)
             lobbies[lobby_id] = lobby
 
-            print("NEW LOBBY MADE - id: " + lobby_id)
+            print("\n================\n NEW LOBBY MADE \n================\n")
+
+        # Otherwise update the existing lobby
+        else:
+
+            # TODO: make it so that refreshing the page doesn't add new players to the lobby
+            # probably easiest to do with cookies. Not important for MVP, but would be good to do later
+            
+            print("\n===================\n NEW PLAYER JOINED \n===================\n")
 
         
         lobby.add_player()
-        print("Lobby_id: " + lobby_id + "\nNum players: " + str(lobby.numPlayers))
-        print("Num ready players: " + str(lobby.numReadyPlayers))
+
+        print(str(lobby) + "\n")
 
         # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 
