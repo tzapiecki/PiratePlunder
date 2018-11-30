@@ -1,5 +1,7 @@
 """
 Lobby class to keep information about each game session
+
+Written by Gabriel Brown
 """
 from player import Player
 

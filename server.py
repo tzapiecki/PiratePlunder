@@ -2,7 +2,7 @@
 A flask server that emits asynchronous events to clients
 using SocketIO
 
-Routes designed by Gabriel Brown
+Written by Gabriel Brown
 """
 
 from flask import Flask, render_template, make_response, jsonify, request

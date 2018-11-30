@@ -1,5 +1,7 @@
 """
 Keep track of information about each player in game
+
+Written by Gabriel Brown
 """
 import uuid
 
