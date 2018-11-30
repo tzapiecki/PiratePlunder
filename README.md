@@ -30,9 +30,19 @@ That's it! Remember to always activate your virtual environment with `. ./venv/b
 ```
 python server.py
 ```
-Go to the url it lists, grab a friend, and start playing!  
+Go to the url listed in the terminal window, grab a friend, and start playing!  
 
-Note: in the terminal window where you started the server, you can shut down the server at any time by entering `Ctrl + C`
+Note 1: If you're just running the server locally (i.e. the url looks something like `http://127.0.0.1:5000`) you'll need to open up a page in two different browsers to get two players in the lobby and start the game, because players are tracked based on cookies.
+
+Note 2: in the terminal window where you started the server, you can shut down the server at any time by entering `Ctrl + C`
 
 ## Project structure
-TODO
+
+### server.py
+This is where the main Flask app lives. Our Flask app handles various url requests from the client-side and responds with a new page or information about the game.
+
+### templates/...
+The templates for the lobby and game page live in this folder.
+
+### static/...
+The login page and static images used in the game live in this folder.

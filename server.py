@@ -2,13 +2,14 @@
 A flask server that emits asynchronous events to clients
 using SocketIO
 
-Routes designed by Gabriel Brown
+Written by Gabriel Brown
 """
 
 from flask import Flask, render_template, make_response, jsonify, request
 from flask_socketio import SocketIO, emit
 import events
 from lobby import Lobby
+from player import Player
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
@@ -25,6 +26,7 @@ Routes to new pages
 """
 @app.route('/')
 def index():
+
     return app.send_static_file('login.html')
 
 @app.route('/lobby/<lobby_id>', methods=['GET', 'POST'])
@@ -33,6 +35,7 @@ def lobby(lobby_id):
     # If player is sending a status update
     if request.method == 'POST':
 
+        user_id = request.cookies.get("user_id", "no_user_id")
         status = request.args.get("status", "none")
 
         print("\n==============\n LOBBY UPDATE \n==============\n")
@@ -44,7 +47,7 @@ def lobby(lobby_id):
             # there are 2+ players in the lobby and all are ready
 
             lobby = lobbies[lobby_id]
-            lobby.add_ready_player()
+            lobby.toggle_ready(user_id)
 
             print(str(lobby) + "\n")
 
@@ -59,7 +62,7 @@ def lobby(lobby_id):
 
         elif status == "unready":
 
-            lobbies[lobby_id].remove_ready_player()
+            lobbies[lobby_id].toggle_ready(user_id)
 
             return make_response()
 
@@ -86,14 +89,32 @@ def lobby(lobby_id):
             
             print("\n===================\n NEW PLAYER JOINED \n===================\n")
 
-        
-        lobby.add_player()
+
+        # setup response so we can add cookies to it later
+        response = make_response(render_template("lobby.html", lobby_id=lobby_id))
+
+
+        # Setup cookies
+        user_id = request.cookies.get('user_id', "")
+
+        # if somehow first page didn't add cookies
+        if user_id == "":
+
+            player = Player()   # make new player obj with randomnly generated uuid as user_id
+            response.set_cookie("user_id", player.user_id)
+            lobby.add_player(player)
+
+        # if they have user_id, try and add to lobby
+        else:
+            player = Player(user_id) 
+            lobby.add_player(player)
+
 
         print(str(lobby) + "\n")
 
         # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 
-        return render_template("lobby.html", lobby_id=lobby_id)
+        return response
 
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
