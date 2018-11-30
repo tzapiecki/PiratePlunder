@@ -1,6 +1,7 @@
 """
 Lobby class to keep information about each game session
 """
+from player import Player
 
 class Lobby:
 
@@ -8,32 +9,51 @@ class Lobby:
         """Constructor for Lobby"""
 
         self.lobby_id = lobby_id
-        self.numPlayers = 0
+        self.players = {}       # KEY: cookie, VALUE: Player object
         self.numReadyPlayers = 0
 
     def __str__(self):
         """Prints out info about lobby"""
 
-        return "Lobby_id: " + self.lobby_id + "\nNum players: " + str(self.numPlayers) + "\nNum ready players: " + str(self.numReadyPlayers)
+        return "Lobby_id: " + self.lobby_id + "\nNum players: " + str(len(self.players)) + "\nNum ready players: " + str(self.numReadyPlayers)
 
 
-    def add_player(self):
+    def player_is_in_lobby(self, user_id):
+        """Returns true if player with that user_id is already in the lobby"""
 
-        self.numPlayers += 1
-
-
-    def add_ready_player(self):
-
-        self.numReadyPlayers += 1
+        return self.players.get(user_id, "no_player") != "no_player"
 
 
-    def remove_ready_player(self):
+    def add_player(self, player):
+        """Adds the player object passed in provided they're not already in lobby"""
 
-        self.numReadyPlayers -= 1
+        if not self.player_is_in_lobby(player):
+
+            self.players[player.user_id] = player
+
+
+    def toggle_ready(self, user_id):
+        """
+        Toggles the given player's ready status and updates numReadyPlayers accordingly,
+        assuming they were in the lobby to begin with
+        """
+
+        if self.player_is_in_lobby(user_id):
+
+            player = self.players[user_id]
+
+            new_ready_status = not player.ready # save to update numReadyPlayers later
+            player.ready = new_ready_status     # update player object in this lobby
+
+            if new_ready_status:
+                self.numReadyPlayers += 1
+
+            else:
+                self.numReadyPlayers -= 1
         
 
     def is_ready(self):
         """Returns true if every player is ready and there are at least two players"""
 
-        return self.numPlayers == self.numReadyPlayers and self.numPlayers == 2
+        return len(self.players) == self.numReadyPlayers and len(self.players) >= 2
 
