@@ -27,11 +27,19 @@ class Lobby:
 
 
     def add_player(self, player):
-        """Adds the player object passed in provided they're not already in lobby"""
+        """
+        Adds the player object passed in provided they're not already in lobby.
+        Returns a boolean that is true if player needed to be added to lobby
+        """
 
-        if not self.player_is_in_lobby(player):
+        if not self.player_is_in_lobby(player.user_id):
 
             self.players[player.user_id] = player
+            return True
+
+        else:
+            
+            return False
 
 
     def toggle_ready(self, user_id):

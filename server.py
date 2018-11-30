@@ -67,10 +67,9 @@ def lobby(lobby_id):
             return make_response()
 
 
-    # If loading lobby page for first time
+    # If loading the lobby page
     else:
 
-        # Make new Lobby object if need be, otherwise use old one
         lobby = lobbies.get(lobby_id, "no_lobby")
 
         # If no lobby object with that id found, make a new one
@@ -81,14 +80,6 @@ def lobby(lobby_id):
 
             print("\n================\n NEW LOBBY MADE \n================\n")
 
-        # Otherwise update the existing lobby
-        else:
-
-            # TODO: make it so that refreshing the page doesn't add new players to the lobby
-            # probably easiest to do with cookies. Not important for MVP, but would be good to do later
-            
-            print("\n===================\n NEW PLAYER JOINED \n===================\n")
-
 
         # setup response so we can add cookies to it later
         response = make_response(render_template("lobby.html", lobby_id=lobby_id))
@@ -97,18 +88,22 @@ def lobby(lobby_id):
         # Setup cookies
         user_id = request.cookies.get('user_id', "")
 
-        # if somehow first page didn't add cookies
+        # if user hasn't played pirate plunder before
         if user_id == "":
 
             player = Player()   # make new player obj with randomnly generated uuid as user_id
             response.set_cookie("user_id", player.user_id)
-            lobby.add_player(player)
+            player_added = lobby.add_player(player)
 
         # if they have user_id, try and add to lobby
         else:
             player = Player(user_id) 
-            lobby.add_player(player)
+            player_added = lobby.add_player(player)
 
+
+        # only print message about player joining if player was actually added (not in lobby before)
+        if player_added:
+            print("\n===================\n NEW PLAYER JOINED \n===================\n")
 
         print(str(lobby) + "\n")
 
