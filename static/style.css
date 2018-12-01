@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    background-color: #fdab5e;
+    font-family: 'Signika', sans-serif;
+}
+
+/***************************
+=======  LOGIN PAGE  =======
+****************************/
+#loginPage form {
+    margin-top: 6rem;
+}
+
+#loginPage .title {
+    margin: 2rem 0;
+}
+
+#loginPage .title label {
+    display: block;
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 8rem;
+    text-align: center;
+    height: 0.8em;
+    text-shadow: 0 0 30px #ffffff;
+}
+
+#loginPage div p {
+    font-family: 'Signika', sans-serif;
+    font-size: 2rem;
+    text-align: center;
+    color: #111111;
+}
+
+#loginPage .roomCode {
+    font-family: 'Sedgwick Ave', cursive;
+    font-size: 3rem;
+    height: 4.75rem;
+    width: 27rem;
+    text-align: center;
+    display: block;
+    margin: auto;
+    background-color: #353535;
+    border: none;
+    border-radius: 3px;
+    color: white;
+}
+
+#loginPage .roomCode::placeholder {
+    color: #a4a4b3;
+    opacity: 1;
+}
+
+#loginPage .submitButton {
+    font-family: 'Signika', sans-serif;
+    font-weight: bold;
+    color: #ffffff;
+    font-size: 3rem;
+    display: block;
+    margin: auto;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 1rem;
+    background-color: #1b3aa1;
+    cursor: pointer;
+    box-shadow: 0 0 3px 0px #333333;
+}
+
+#loginPage .submitButton:hover {
+    box-shadow: 0 0 3px 3px #ffffff;
+}
+
+#loginPage .submitButton:disabled {
+    color: #808080;
+    background-color: #f0f0f0;
+    cursor: default;
+}
+
+#loginPage .submitButton:hover:disabled {
+    box-shadow: 0 0 3px 0px #333333;
+}
+
+/***************************
+=======  LOBBY PAGE  =======
+****************************/
+#lobbyPage .backButton {
+    font-size: 6rem;
+    border: none;
+    height: 5rem;
+    line-height: 5rem;
+    display: inline-block;
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+}
+
+#lobbyPage .backButton:hover {
+    color: white;
+    text-shadow: 0 0 20px #000000;
+    cursor: pointer;
+}
+
+#lobbyPage .title {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    background-color: #1b3aa1;
+    color: white;
+    font-family: 'Sedgwick Ave', cursive;
+    padding: 1rem 1rem 0rem 1rem;
+    font-size: 4rem;
+    border-radius: 1rem;
+}
+
+#lobbyPage .readyButton {
+    position: fixed;
+    bottom: 2rem;
+}
