@@ -40,14 +40,15 @@ def lobby(lobby_id):
 
         print("\n==============\n LOBBY UPDATE \n==============\n")
 
+        lobby = lobbies[lobby_id]
+
         if status == "ready":
 
             # update lobby object and emit a socket.io event to  
             # tell all players to load the game page if
             # there are 2+ players in the lobby and all are ready
 
-            lobby = lobbies[lobby_id]
-            lobby.toggle_ready(user_id)
+            lobby.set_ready(user_id, True)
 
             print(str(lobby) + "\n")
 
@@ -61,8 +62,9 @@ def lobby(lobby_id):
 
 
         elif status == "unready":
+            lobby.set_ready(user_id, False)
 
-            lobbies[lobby_id].toggle_ready(user_id)
+            print(str(lobby) + "\n")
 
             return make_response()
 
