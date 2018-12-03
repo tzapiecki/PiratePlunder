@@ -16,7 +16,6 @@
             transform: translate(-50%,-50%);
             border: 2px solid white;
         }
-
     </style>
 </head>
 <body>
@@ -47,17 +46,30 @@
             // Load & Define our game assets
             this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
             this.load.image('background', "bg.png");
-            this.load.image('ship',"ship.png")
+            this.load.image('ship',"ship.png");
+            this.load.image('btn', 'btn.jpg');
         };
 
 
         function create () {
             background=this.add.tileSprite(0, 0,1600,1170, 'background');
             this.add.sprite(350,90,'ship').setScale(0.55);
-        };
+            const sailButton = this.add.sprite(130, 100,'btn').setScale(0.3);
+            sailButton.setInteractive();
+            sailButton.on('pointerdown', () => updateNextTask(this) );
+
+
+
+          };
+
+
+        function updateNextTask(){
+              const newButton= this.add.text(400, 200, 'Trim the Jib Sheets');
+              newButton.setInteractive();
+          };
 
         function update () {
-          background.x +=2;
+          background.tilePositionX -=2;
         };
 
     </script>

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
+        <title>{{lobby_id}}</title>
+
+        <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet"> 
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
         
         <script
             type="text/javascript"
@@ -15,23 +18,38 @@
         <script>
             var socket = io.connect('http://' + document.domain + ':' + location.port);
             socket.on('connect', function() {
-                socket.emit('my event', {data: 'I\'m connected!'});
-                console.log('Connected!');
+                // socket.emit('my event', {data: 'I\'m connected!'});
             });
 
             // Handle game start event
             socket.on('game_start', function(serverData) {
-
-                window.location.href = "/game/{{lobby_id}}"
+                window.location.href = "/game/{{lobby_id}}";
             });
-
         </script>
     </head>
 
     <body>
-        <button onclick="window.history.back()">&lt;-</button>
+        <div id="lobbyPage">
+            <button class="backButton" onclick="window.location.href = '/';">⬅</button>
+            <label class="title">{{ lobby_id }}</label>
+            <div class="ready">
+                <span>READY?</span>
+                <input id="readyCheck" type="checkbox">
+                <label for="readyCheck"></label>
+            </div>
+        </div>
 
-        <h1>{{ lobby_id }}</h1>
-        <button onclick="$.ajax({url: window.location.href + '?status=ready', method: 'POST'})">READY UP</button>
+        <script>
+            var readyBox = document.querySelector('#lobbyPage .ready input');
+
+            readyBox.onclick = function () {
+                var status = "unready";
+                if (readyBox.checked) {
+                    status = "ready";
+                }
+
+                $.ajax({url: window.location.href + '?status=' + status, method: 'POST'});
+            }
+        </script>
     </body>
 </html>
