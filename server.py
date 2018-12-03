@@ -54,27 +54,10 @@ def lobby(lobby_id):
 
             print(str(lobby) + "\n")
 
-            if lobby.is_ready():
-
-                # Assign and pass in tasks to each person
-
-                initial_task_assignments = {}  # KEY: cookie, VALUE: task
-
-                player_cookies = list(lobby.players.keys())
-                initial_task_ids = lobby.task_generator.current_tasks.keys()
-
-                # Assign tasks in no particular order, just however the dictionaries organize their keys
-                for i in range(len(player_cookies)):
-
-                    player_cookie = player_cookies[i]
-                    task_id = initial_task_ids[i]
-
-                    initial_task_assignments[player_cookie] = lobby.task_generator.current_tasks[task_id].serialize()
-
-
+            if lobby.check_ready():
 
                 print("\n==============\n GAME STARTED \n==============\n")
-                socketio.emit(events.GAME_START, json.dumps(initial_task_assignments))
+                socketio.emit(events.GAME_START)
 
             return make_response()
 
@@ -134,7 +117,10 @@ def lobby(lobby_id):
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
 
-    return render_template("game.html", lobby_id=lobby_id)
+    lobby = lobbies[lobby_id]
+    initial_task = lobby.initial_task_assignments[request.cookies["user_id"]].serialize()
+
+    return render_template("game.html", lobby_id=lobby_id, initial_task=initial_task)
 
 
 """

@@ -12,8 +12,9 @@ class Lobby:
         """Constructor for Lobby"""
 
         self.lobby_id = lobby_id
-        self.players = {}       # KEY: cookie, VALUE: Player object
+        self.players = {}       # KEY: user_id/cookies, VALUE: Player object
         self.numReadyPlayers = 0
+        self.initial_task_assignments = {} # KEY: user/id cookie, VALUE: task
 
     def __str__(self):
         """Prints out info about lobby"""
@@ -82,14 +83,51 @@ class Lobby:
                 else:
                     self.numReadyPlayers -= 1
 
-    def is_ready(self):
-        """Returns true if every player is ready and there are at least two players"""
+    def check_ready(self):
+        """
+        If every player is ready and there are at least two players,
+        returns true and sets up task generator and initial tasks
+        """
 
         if len(self.players) == self.numReadyPlayers and len(self.players) >= 2:
+
             self.task_generator = TaskGenerator(len(self.players))
+
+            # Assign tasks
+            player_cookies = list(self.players.keys())
+            initial_task_ids = self.task_generator.current_tasks.keys()
+
+            # Assign tasks in no particular order, just however the dictionaries organize their keys
+            for i in range(len(player_cookies)):
+
+                player_cookie = player_cookies[i]
+                task_id = initial_task_ids[i]
+
+                self.initial_task_assignments[player_cookie] = self.task_generator.current_tasks[task_id]
+
             return True
 
         else:
             return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
