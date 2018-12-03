@@ -48,18 +48,22 @@
             this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
             this.load.image('background', "bg.png");
             this.load.image('ship',"ship.png");
-            this.load.image('btn', 'btn.jpg');
+            this.load.image('sail_btn', 'btn.jpg');
+            this.load.image('tack_btn', 'tbtn.jpg');
+
         };
 
 
         function create () {
             background=this.add.tileSprite(0, 0,1600,1170, 'background');
             this.add.sprite(350,90,'ship').setScale(0.55);
-            const sailButton = this.add.sprite(130, 100,'btn').setScale(0.3);
+            const sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
             sailButton.setInteractive();
             sailButton.on('pointerdown', () => completeTask(this) );
-            console.log(task);
-            task=this.add.text(200,300,"Arrr! Raise the Sail, Matey!",{
+            const tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
+            tackButton.setInteractive();
+            tackButton.on('pointerdown', () => completeTask(this) );
+            task=this.add.text(200,400,"Arrr! Raise the Sail, Matey!",{
             font: "35px Arial",
             fill: "#ff0044",
             align: "center"
