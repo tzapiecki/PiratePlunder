@@ -4,9 +4,11 @@ using SocketIO
 
 Written by Gabriel Brown
 """
+import json
 
-from flask import Flask, render_template, make_response, jsonify, request
+from flask import Flask, render_template, make_response, request
 from flask_socketio import SocketIO, emit
+
 import events
 from lobby import Lobby
 from player import Player
@@ -54,9 +56,25 @@ def lobby(lobby_id):
 
             if lobby.is_ready():
 
-                # TODO: assign and pass in tasks to each person
+                # Assign and pass in tasks to each person
+
+                initial_task_assignments = {}  # KEY: cookie, VALUE: task
+
+                player_cookies = list(lobby.players.keys())
+                initial_task_ids = lobby.task_generator.current_tasks.keys()
+
+                # Assign tasks in no particular order, just however the dictionaries organize their keys
+                for i in range(len(player_cookies)):
+
+                    player_cookie = player_cookies[i]
+                    task_id = initial_task_ids[i]
+
+                    initial_task_assignments[player_cookie] = lobby.task_generator.current_tasks[task_id].serialize()
+
+
+
                 print("\n==============\n GAME STARTED \n==============\n")
-                socketio.emit(events.GAME_START)
+                socketio.emit(events.GAME_START, json.dumps(initial_task_assignments))
 
             return make_response()
 

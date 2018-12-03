@@ -17,6 +17,16 @@ class TaskGenerator:
 
     tasks = []  # TODO: fill this up with all possible tasks
 
+    # fill with sample task data
+    for i in range(20):
+
+        task_id = i
+        description = "Complete Task #" + str(i) + "!"
+        button_text = "Push this button to complete Task #" + str(i)
+        button_position = (50, 50)
+
+        tasks.append(Task(task_id, description, button_text, button_position))
+
 
     def __init__(self, num_players):
 
@@ -26,6 +36,13 @@ class TaskGenerator:
 
         self.update_usable_tasks()
         self.generate_initial_tasks()
+
+        print("Total tasks:")
+        print(self.tasks)
+        print("\nUsable tasks:")
+        print(self.usable_tasks)
+        print("\nCurrent tasks:")
+        print(self.current_tasks)
 
 
     def new_task(self, old_task_id):
@@ -59,7 +76,7 @@ class TaskGenerator:
         new_usable_tasks = {}
 
         # Swap out usable_tasks with a new random set of tasks
-        while len(new_usable_tasks) < NUM_TASKS_PER_PLAYER * self.num_players:
+        while len(new_usable_tasks) < TaskGenerator.NUM_TASKS_PER_PLAYER * self.num_players:
 
             next_index = random.randrange(0, len(self.tasks))
             next_task = self.tasks[next_index]
