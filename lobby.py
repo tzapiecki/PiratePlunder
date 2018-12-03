@@ -4,6 +4,7 @@ Lobby class to keep information about each game session
 Written by Gabriel Brown
 """
 from player import Player
+from task_generator import TaskGenerator
 
 class Lobby:
 
@@ -84,5 +85,11 @@ class Lobby:
     def is_ready(self):
         """Returns true if every player is ready and there are at least two players"""
 
-        return len(self.players) == self.numReadyPlayers and len(self.players) >= 2
+        if len(self.players) == self.numReadyPlayers and len(self.players) >= 2:
+            self.task_generator = TaskGenerator(len(self.players))
+            return True
+
+        else:
+            return False
+
 
