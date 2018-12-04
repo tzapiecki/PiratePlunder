@@ -62,7 +62,6 @@
 
             // Handle game start event
             socket.on('game_load', function(serverData) {
-                alert("GAME STARTED");
                 window.location.href = "/game/{{lobby_id}}"
             });
 
