@@ -145,3 +145,26 @@
     text-shadow: 0 0 3px black;
     cursor: pointer;
 }
+
+#lobbyPage .lobbyMembers {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75%;
+    height: 50%;
+    border: 2px solid black;
+}
+
+#lobbyPage .lobbyMember {
+    display: inline-block;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    margin: 2rem;
+    background-color: black;
+}
+
+#lobbyPage .readyMember {
+    background-color: green;
+}

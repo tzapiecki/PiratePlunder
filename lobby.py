@@ -4,6 +4,7 @@ Lobby class to keep information about each game session
 Written by Gabriel Brown
 """
 from player import Player
+import events
 
 class Lobby:
 
@@ -11,13 +12,13 @@ class Lobby:
         """Constructor for Lobby"""
 
         self.lobby_id = lobby_id
-        self.players = {}       # KEY: cookie, VALUE: Player object
+        self.numPlayers = 0
         self.numReadyPlayers = 0
 
     def __str__(self):
         """Prints out info about lobby"""
 
-        return "Lobby_id: " + self.lobby_id + "\nNum players: " + str(len(self.players)) + "\nNum ready players: " + str(self.numReadyPlayers)
+        return "Lobby_id: " + self.lobby_id + "\nNum players: " + str(self.numPlayers) + "\nNum ready players: " + str(self.numReadyPlayers)
 
 
     def player_is_in_lobby(self, user_id):
@@ -26,13 +27,12 @@ class Lobby:
         return self.players.get(user_id, "no_player") != "no_player"
 
 
-    def add_player(self, player):
+    def add_player(self):
         """Adds the player object passed in provided they're not already in lobby"""
+        self.numPlayers += 1
 
-        if not self.player_is_in_lobby(player):
-
-            self.players[player.user_id] = player
-
+    def remove_player(self):
+        self.numPlayers -= 1
 
     def toggle_ready(self, user_id):
         """
@@ -76,5 +76,6 @@ class Lobby:
     def is_ready(self):
         """Returns true if every player is ready and there are at least two players"""
 
-        return len(self.players) == self.numReadyPlayers and len(self.players) >= 2
+        #return len(self.players) == self.numReadyPlayers and len(self.players) >= 2
+        return self.numPlayers >= 2 and self.numPlayers == self.numReadyPlayers
 

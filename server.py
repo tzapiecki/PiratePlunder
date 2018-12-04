@@ -13,7 +13,7 @@ from player import Player
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
-socketio = SocketIO(app)
+socketio = SocketIO(app, ping_interval=1, ping_timeout=3)
 
 """
 Global variables
@@ -35,7 +35,7 @@ def lobby(lobby_id):
     # If player is sending a status update
     if request.method == 'POST':
 
-        user_id = request.cookies.get("user_id", "no_user_id")
+        #user_id = request.cookies.get("user_id", "no_user_id")
         status = request.args.get("status", "none")
 
         print("\n==============\n LOBBY UPDATE \n==============\n")
@@ -48,8 +48,8 @@ def lobby(lobby_id):
             # tell all players to load the game page if
             # there are 2+ players in the lobby and all are ready
 
-            lobby.set_ready(user_id, True)
-
+            #lobby.set_ready(user_id, True)
+            lobby.numReadyPlayers += 1
             print(str(lobby) + "\n")
 
             if lobby.is_ready():
@@ -58,13 +58,25 @@ def lobby(lobby_id):
                 print("\n==============\n GAME STARTED \n==============\n")
                 socketio.emit(events.GAME_START)
 
+            socketio.emit(
+                events.LOBBY_STATUS_CHANGED,
+                {"numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
+                namespace="/" + lobby_id
+            )
+
             return make_response()
 
 
         elif status == "unready":
-            lobby.set_ready(user_id, False)
-
+            # lobby.set_ready(user_id, False)
+            lobby.numReadyPlayers -= 1
             print(str(lobby) + "\n")
+
+            socketio.emit(
+                events.LOBBY_STATUS_CHANGED,
+                {"numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
+                namespace="/" + lobby_id
+            )
 
             return make_response()
 
@@ -88,31 +100,57 @@ def lobby(lobby_id):
 
             # TODO: make it so that refreshing the page doesn't add new players to the lobby
             # probably easiest to do with cookies. Not important for MVP, but would be good to do later
-            
-            print("\n===================\n NEW PLAYER JOINED \n===================\n")
+            pass
+
+        # # Setup cookies
+        # user_id = request.cookies.get('user_id', "")
+
+        # # if somehow first page didn't add cookies
+        # player = None
+        # if user_id == "":
+        #     player = Player()   # make new player obj with randomnly generated uuid as user_id
+
+        # # if they have user_id, try and add to lobby
+        # else:
+        #     player = Player(user_id)
+        
+        # lobby.add_player(player)
 
 
-        # setup response so we can add cookies to it later
-        response = make_response(render_template("lobby.html", lobby_id=lobby_id))
+        def playerDisconnected():
+            lobby.remove_player()
+            lobby.numReadyPlayers = 0
+            print("\n===================\n PLAYER DISCONNECTED \n===================\n")
+            print(str(lobby))
+            socketio.emit(
+                events.PLAYER_DISCONNECTED,
+                { "numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
+                namespace="/" + lobby_id
+            )
+        socketio.on_event(
+            'disconnect',
+            playerDisconnected,
+            namespace="/" + lobby_id
+        )
 
-
-        # Setup cookies
-        user_id = request.cookies.get('user_id', "")
-
-        # if somehow first page didn't add cookies
-        if user_id == "":
-
-            player = Player()   # make new player obj with randomnly generated uuid as user_id
-            response.set_cookie("user_id", player.user_id)
-            lobby.add_player(player)
-
-        # if they have user_id, try and add to lobby
-        else:
-            player = Player(user_id) 
-            lobby.add_player(player)
-
-
-        print(str(lobby) + "\n")
+        def playerConnected():
+            lobby.add_player()
+            print("\n===================\n NEW PLAYER CONNECTED \n===================\n")
+            print(str(lobby))
+            socketio.emit(
+                events.PLAYER_JOINED,
+                {"numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
+                namespace = "/" + lobby_id
+            )
+        socketio.on_event(
+            'connect',
+            playerConnected,
+            namespace = "/" + lobby_id
+        )
+        
+        # setup response
+        response = make_response(render_template("lobby.html", lobby_id=lobby_id, num_players=lobby.numPlayers))
+        #response.set_cookie("user_id", player.user_id)
 
         # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 

@@ -6,25 +6,66 @@
         <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet"> 
         <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
         
-        <script
-            type="text/javascript"
-            src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js">
-        </script>
-        <script
-            src="https://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-            crossorigin="anonymous">
-        </script>
+        <script type="text/javascript" src="{{ url_for('static', filename='packages/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='packages/socket.io.js') }}"></script>
+
         <script>
+            var numPlayers = parseInt('{{num_players}}');
+            var numReadyPlayers = parseInt('{{num_ready_players}}');
+
+            var updateLobbyMembers = function (data) {
+                data = data || {};
+
+                numPlayers = typeof data.numPlayers !== "undefined" ? data.numPlayers : numPlayers;
+                numReadyPlayers = typeof data.numReadyPlayers !== "undefined" ? data.numReadyPlayers : numReadyPlayers;
+
+                let lobbyMembersDiv = $('#lobbyPage .lobbyMembers');
+                if (lobbyMembersDiv.length > 0) {
+                    lobbyMembersDiv.empty();
+
+                    for (let i = 0; i < numPlayers; i++) {
+                        let newMember = $("<div>");
+                        newMember.addClass('lobbyMember');
+                        if (i < numReadyPlayers) {
+                            newMember.addClass('readyMember');
+                        }
+                        lobbyMembersDiv.append(newMember);
+                    }
+                }
+            };
+
             var socket = io.connect('http://' + document.domain + ':' + location.port);
-            socket.on('connect', function() {
-                // socket.emit('my event', {data: 'I\'m connected!'});
+            socket.nsp = "/" + "{{ lobby_id }}";
+
+            window.onbeforeunload = function () {
+                socket.disconnect();
+            };
+            
+            socket.on('player_joined', updateLobbyMembers);
+            socket.on('player_disconnected', function (serverData) {
+                updateLobbyMembers(serverData);
+                let readyBox = document.querySelector('#lobbyPage .ready input') || {};
+                readyBox.checked = false;
+                alert("Another player has disconnected!");
+            });
+
+            socket.on('disconnect', function () {
+                alert("You lost connection to the server!");
+                let readyBox = document.querySelector('#lobbyPage .ready input') || {};
+                readyBox.checked = false;
+            })
+
+
+            socket.on("lobby_status_changed", function (serverData) {
+                updateLobbyMembers(serverData);
             });
 
             // Handle game start event
             socket.on('game_start', function(serverData) {
                 window.location.href = "/game/{{lobby_id}}";
             });
+
+            updateLobbyMembers();
         </script>
     </head>
 
@@ -32,6 +73,9 @@
         <div id="lobbyPage">
             <button class="backButton" onclick="window.location.href = '/';">⬅</button>
             <label class="title">{{ lobby_id }}</label>
+
+            <div class="lobbyMembers"></div>
+
             <div class="ready">
                 <span>READY?</span>
                 <input id="readyCheck" type="checkbox">
@@ -50,6 +94,7 @@
 
                 $.ajax({url: window.location.href + '?status=' + status, method: 'POST'});
             }
+            updateLobbyMembers();
         </script>
     </body>
 </html>
