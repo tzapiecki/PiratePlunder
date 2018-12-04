@@ -189,9 +189,7 @@ def task_failed(lobby_id, task_id):
     and sends a new task to the client that made a call to this route
     """
 
-    # Since there could be multiple lobbies at once, I'm including the lobby_id
-    # in the data sent with the event so that different lobbies won't get conflicting results
-    socketio.emit(events.TASK_FAILED, { "lobby_id": lobby_id, "task_id": task_id })
+    socketio.emit(events.TASK_FAILED, { "task_id": task_id }, namespace="/game:" + lobby_id)
 
     # Generate a new task and return that as a json response
     # (the user who failed the task should send the request to this URL,
@@ -214,9 +212,9 @@ def handle_input(lobby_id, task_id):
     if task_id != "not_current_task":
 
         new_task = lobby.task_generator.new_task(current_task_id)
-        response_json = { "lobby_id": lobby_id, "completed_task_id": current_task_id, "new_task": new_task.serialize() }
+        response_json = { "completed_task_id": current_task_id, "new_task": new_task.serialize() }
 
-        socketio.emit(events.TASK_COMPLETE, response_json)
+        socketio.emit(events.TASK_COMPLETE, response_json, namespace="/game:" + lobby_id)
 
 
     # If the action did not complete one of the current tasks, let every client 
@@ -225,7 +223,7 @@ def handle_input(lobby_id, task_id):
 
         # TODO: If we want to punish this, we should also reduce the ship health and
         # check for a loss condition
-        socketio.emit(events.BAD_INPUT, { "lobby_id": lobby_id, "task_id": task_id })
+        socketio.emit(events.BAD_INPUT, { "task_id": task_id }, namespace="/game:" + lobby_id)
 
     return make_response()
 
