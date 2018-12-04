@@ -6,21 +6,26 @@ Written by Gabriel Brown
 """
 import json
 
-from flask import Flask, render_template, make_response, request
+from flask import Flask, render_template, make_response, request, redirect
 from flask_socketio import SocketIO, emit
 
 import events
 from lobby import Lobby
+from gameLobby import GameLobby
 from player import Player
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
-socketio = SocketIO(app, ping_interval=1, ping_timeout=3)
+
+# The ping interval is how often it checks in with clients (1 second)
+# The ping timeout is when the server considers a client disconnected (after 3 seconds)
+socketio = SocketIO(app, ping_interval=1, ping_timeout=3) 
 
 """
 Global variables
 """
-lobbies = {}   # Key: lobby_id, Value: lobby object
+stagingLobbies = {}   # Key: lobby_id, Value: lobby object
+gameLobbies = {}
 tasks = [] 
 
 """
@@ -37,33 +42,31 @@ def lobby(lobby_id):
     # If player is sending a status update
     if request.method == 'POST':
 
-        #user_id = request.cookies.get("user_id", "no_user_id")
         status = request.args.get("status", "none")
 
         print("\n==============\n LOBBY UPDATE \n==============\n")
 
-        lobby = lobbies[lobby_id]
+        lobby = stagingLobbies[lobby_id]
 
         if status == "ready":
-
-            # update lobby object and emit a socket.io event to  
-            # tell all players to load the game page if
-            # there are 2+ players in the lobby and all are ready
-
-            #lobby.set_ready(user_id, True)
             lobby.numReadyPlayers += 1
             print(str(lobby) + "\n")
-
-            if lobby.check_ready():
-
-                print("\n==============\n GAME STARTED \n==============\n")
-                socketio.emit(events.GAME_START)
 
             socketio.emit(
                 events.LOBBY_STATUS_CHANGED,
                 {"numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
                 namespace="/" + lobby_id
             )
+
+            if lobby.check_ready():
+                gameLobbies[lobby_id] = GameLobby(lobby_id, lobby.numPlayers)
+
+                socketio.emit(
+                    events.GAME_LOAD,
+                    {},
+                    namespace="/" + lobby_id
+                )
+                print("\n==============\n GAME STARTED \n==============\n")
 
             return make_response()
 
@@ -84,38 +87,15 @@ def lobby(lobby_id):
 
     # If loading the lobby page
     else:
-
-        lobby = lobbies.get(lobby_id, "no_lobby")
+        lobby = stagingLobbies.get(lobby_id, "no_lobby")
 
         # If no lobby object with that id found, make a new one
-        if(lobby == "no_lobby"):
+        if (lobby == "no_lobby"):
 
             lobby = Lobby(lobby_id)
-            lobbies[lobby_id] = lobby
+            stagingLobbies[lobby_id] = lobby
 
             print("\n================\n NEW LOBBY MADE \n================\n")
-
-        # Otherwise update the existing lobby
-        else:
-
-            # TODO: make it so that refreshing the page doesn't add new players to the lobby
-            # probably easiest to do with cookies. Not important for MVP, but would be good to do later
-            pass
-
-        # # Setup cookies
-        # user_id = request.cookies.get('user_id', "")
-
-        # # if somehow first page didn't add cookies
-        # player = None
-        # if user_id == "":
-        #     player = Player()   # make new player obj with randomnly generated uuid as user_id
-
-        # # if they have user_id, try and add to lobby
-        # else:
-        #     player = Player(user_id)
-        
-        # lobby.add_player(player)
-
 
         def playerDisconnected():
             lobby.remove_player()
@@ -148,47 +128,54 @@ def lobby(lobby_id):
             namespace = "/" + lobby_id
         )
         
-        # setup response
         response = make_response(render_template("lobby.html", lobby_id=lobby_id, num_players=lobby.numPlayers))
-        #response.set_cookie("user_id", player.user_id)
-
-        # # setup response so we can add cookies to it later
-        # response = make_response(render_template("lobby.html", lobby_id=lobby_id))
-
-
-        # # Setup cookies
-        # user_id = request.cookies.get('user_id', "")
-
-        # # if user hasn't played pirate plunder before
-        # if user_id == "":
-
-        #     player = Player()   # make new player obj with randomnly generated uuid as user_id
-        #     response.set_cookie("user_id", player.user_id)
-        #     player_added = lobby.add_player(player)
-
-        # # if they have user_id, try and add to lobby
-        # else:
-        #     player = Player(user_id) 
-        #     player_added = lobby.add_player(player)
-
-
-        # # only print message about player joining if player was actually added (not in lobby before)
-        # if player_added:
-        #     print("\n===================\n NEW PLAYER JOINED \n===================\n")
-
-        # print(str(lobby) + "\n")
-
-        # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 
         return response
 
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
+    gameLobby = gameLobbies.get(lobby_id, "no_lobby")
 
-    lobby = lobbies[lobby_id]
-    initial_task = lobby.initial_task_assignments[request.cookies["user_id"]].serialize()
+    # If no gameLobby object with that id found, redirect to the staging lobby
+    if(gameLobby == "no_lobby"):
+        return redirect("/lobby/" + lobby_id)
 
-    return render_template("game.html", lobby_id=lobby_id, initial_task=initial_task)
+    # Setup cookies
+    user_id = request.cookies.get('user_id', "")
+
+    player = None
+    # if user hasn't played pirate plunder before
+    if user_id == "":
+        player = Player()   # make new player obj with randomnly generated uuid as user_id
+    else:
+        player = Player(user_id)
+
+    gameLobby.add_player(player)
+
+    def playerConnects():
+        gameLobby.connectedPlayers += 1
+        if gameLobby.connectedPlayers == gameLobby.numPlayers:
+
+            gameLobby.create_tasks()
+
+            serializedTasks = {}
+            for key in gameLobby.initial_task_assignments.keys():
+                task = gameLobby.initial_task_assignments[key]
+                serializedTasks[key] = task.serialize()
+
+            socketio.emit(
+                events.GAME_START,
+                {
+                    "initialTasks": serializedTasks
+                },
+                namespace="/game:" + lobby_id
+            )
+    socketio.on_event("connect", playerConnects, namespace="/game:" + lobby_id)
+
+    response = make_response(render_template("game.html", lobby_id=lobby_id, user_id=player.user_id))
+    response.set_cookie("user_id", player.user_id)
+
+    return response
 
 
 """
