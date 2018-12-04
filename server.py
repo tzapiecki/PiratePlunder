@@ -4,9 +4,11 @@ using SocketIO
 
 Written by Gabriel Brown
 """
+import json
 
-from flask import Flask, render_template, make_response, jsonify, request
+from flask import Flask, render_template, make_response, request
 from flask_socketio import SocketIO, emit
+
 import events
 from lobby import Lobby
 from player import Player
@@ -52,9 +54,8 @@ def lobby(lobby_id):
             lobby.numReadyPlayers += 1
             print(str(lobby) + "\n")
 
-            if lobby.is_ready():
+            if lobby.check_ready():
 
-                # TODO: assign and pass in tasks to each person
                 print("\n==============\n GAME STARTED \n==============\n")
                 socketio.emit(events.GAME_START)
 
@@ -81,10 +82,9 @@ def lobby(lobby_id):
             return make_response()
 
 
-    # If loading lobby page for first time
+    # If loading the lobby page
     else:
 
-        # Make new Lobby object if need be, otherwise use old one
         lobby = lobbies.get(lobby_id, "no_lobby")
 
         # If no lobby object with that id found, make a new one
@@ -152,6 +152,32 @@ def lobby(lobby_id):
         response = make_response(render_template("lobby.html", lobby_id=lobby_id, num_players=lobby.numPlayers))
         #response.set_cookie("user_id", player.user_id)
 
+        # # setup response so we can add cookies to it later
+        # response = make_response(render_template("lobby.html", lobby_id=lobby_id))
+
+
+        # # Setup cookies
+        # user_id = request.cookies.get('user_id', "")
+
+        # # if user hasn't played pirate plunder before
+        # if user_id == "":
+
+        #     player = Player()   # make new player obj with randomnly generated uuid as user_id
+        #     response.set_cookie("user_id", player.user_id)
+        #     player_added = lobby.add_player(player)
+
+        # # if they have user_id, try and add to lobby
+        # else:
+        #     player = Player(user_id) 
+        #     player_added = lobby.add_player(player)
+
+
+        # # only print message about player joining if player was actually added (not in lobby before)
+        # if player_added:
+        #     print("\n===================\n NEW PLAYER JOINED \n===================\n")
+
+        # print(str(lobby) + "\n")
+
         # TODO: may want to randomly choose a task_id here and now, and save it to tasks
 
         return response
@@ -159,7 +185,10 @@ def lobby(lobby_id):
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
 
-    return render_template("game.html", lobby_id=lobby_id)
+    lobby = lobbies[lobby_id]
+    initial_task = lobby.initial_task_assignments[request.cookies["user_id"]].serialize()
+
+    return render_template("game.html", lobby_id=lobby_id, initial_task=initial_task)
 
 
 """

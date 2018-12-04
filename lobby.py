@@ -5,6 +5,7 @@ Written by Gabriel Brown
 """
 from player import Player
 import events
+from task_generator import TaskGenerator
 
 class Lobby:
 
@@ -13,7 +14,9 @@ class Lobby:
 
         self.lobby_id = lobby_id
         self.numPlayers = 0
+        self.players = {}       # KEY: user_id/cookies, VALUE: Player object
         self.numReadyPlayers = 0
+        self.initial_task_assignments = {} # KEY: user/id cookie, VALUE: task
 
     def __str__(self):
         """Prints out info about lobby"""
@@ -33,6 +36,21 @@ class Lobby:
 
     def remove_player(self):
         self.numPlayers -= 1
+    def add_player(self, player):
+        """
+        Adds the player object passed in provided they're not already in lobby.
+        Returns a boolean that is true if player needed to be added to lobby
+        """
+
+        if not self.player_is_in_lobby(player.user_id):
+
+            self.players[player.user_id] = player
+            return True
+
+        else:
+            
+            return False
+
 
     def toggle_ready(self, user_id):
         """
@@ -73,9 +91,32 @@ class Lobby:
                 else:
                     self.numReadyPlayers -= 1
 
-    def is_ready(self):
-        """Returns true if every player is ready and there are at least two players"""
+    def check_ready(self):
+        """
+        If every player is ready and there are at least two players,
+        returns true and sets up task generator and initial tasks
+        """
+
+        if len(self.players) == self.numReadyPlayers and len(self.players) >= 2:
+
+            self.task_generator = TaskGenerator(len(self.players))
+
+            # Assign tasks
+            player_cookies = list(self.players.keys())
+            initial_task_ids = self.task_generator.current_tasks.keys()
+
+            # Assign tasks in no particular order, just however the dictionaries organize their keys
+            for i in range(len(player_cookies)):
+
+                player_cookie = player_cookies[i]
+                task_id = initial_task_ids[i]
+
+                self.initial_task_assignments[player_cookie] = self.task_generator.current_tasks[task_id]
+
+            return True
+
+        else:
+            return False
 
         #return len(self.players) == self.numReadyPlayers and len(self.players) >= 2
         return self.numPlayers >= 2 and self.numPlayers == self.numReadyPlayers
-

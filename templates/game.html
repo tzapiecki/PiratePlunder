@@ -41,36 +41,57 @@
 
         var game = new Phaser.Game(config);
         var background;
-
+        var task="";
+        var shipSpeed = -2;
         function preload () {
             // Load & Define our game assets
             this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
             this.load.image('background', "bg.png");
             this.load.image('ship',"ship.png");
-            this.load.image('btn', 'btn.jpg');
+            this.load.image('sail_btn', 'btn.jpg');
+            this.load.image('tack_btn', 'tbtn.jpg');
+
         };
 
 
         function create () {
             background=this.add.tileSprite(0, 0,1600,1170, 'background');
             this.add.sprite(350,90,'ship').setScale(0.55);
-            const sailButton = this.add.sprite(130, 100,'btn').setScale(0.3);
+            const sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
             sailButton.setInteractive();
-            sailButton.on('pointerdown', () => updateNextTask(this) );
-
-
+            sailButton.on('pointerdown', () => completeTask(this) );
+            const tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
+            tackButton.setInteractive();
+            tackButton.on('pointerdown', () => completeTask(this) );
+            task=this.add.text(200,400,"Arrr! Raise the Sail, Matey!",{
+            font: "35px Arial",
+            fill: "#ff0044",
+            align: "center"
+            });
 
           };
 
 
-        function updateNextTask(){
-              const newButton= this.add.text(400, 200, 'Trim the Jib Sheets');
-              newButton.setInteractive();
+        function completeTask(){
+              shipSpeed= -4;
+              task.setText('Aye! A Handsome Job!')
           };
+
+
+
 
         function update () {
-          background.tilePositionX -=2;
+          background.tilePositionX += shipSpeed;
         };
+
+    </script>
+
+    <script type="text/javascript">
+        
+        console.log('Task id: {{initial_task.task_id}}');
+        console.log('Task description: {{initial_task.description}}');
+        console.log('Task button text: {{initial_task.button_text}}');
+        console.log('Task button position: {{initial_task.button_position}}');
 
     </script>
 
