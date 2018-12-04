@@ -15,8 +15,6 @@ class Player:
         else:
             self.user_id = user_id
 
-        self.ready = False
-
     def __eq__(self, obj):
 
         return isinstance(obj, Player) and obj.user_id == self.user_id

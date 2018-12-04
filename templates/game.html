@@ -1,99 +1,128 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <script type="text/javascript" src="{{ url_for('static', filename='packages/phaser.js') }}"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            background-color: black;
-        }
-        canvas {
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-            border: 2px solid white;
-        }
-    </style>
-</head>
-<body>
-    <script>
-
-        // Initialize the Phaser Game object and set default game window size
-        var config = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: { y: 200 }
-                }
-            },
-            scene: {
-                preload: preload,
-                create: create,
-                update: update
+    <head>
+        <script type="text/javascript" src="{{ url_for('static', filename='packages/phaser.js') }}"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                background-color: black;
             }
-        };
+            canvas {
+                display: block;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                border: 2px solid white;
+            }
+            #loadingScreen > div {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+                background-color: #888888;
+                opacity: 0.5;
+            }
+            #loadingScreen > label {
+                position: absolute;
+                z-index: 15;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                width: 50%;
+                font-size: 3rem;
+                font-family: sans-serif;
+                background-color: transparent;
+                text-align: center;
+            }
+        </style>
 
-        var game = new Phaser.Game(config);
-        var background;
-        var task="";
-        var shipSpeed = -2;
-        function preload () {
-            // Load & Define our game assets
-            this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
-            this.load.image('background', "bg.png");
-            this.load.image('ship',"ship.png");
-            this.load.image('sail_btn', 'btn.jpg');
-            this.load.image('tack_btn', 'tbtn.jpg');
-
-        };
-
-
-        function create () {
-            background=this.add.tileSprite(0, 0,1600,1170, 'background');
-            this.add.sprite(350,90,'ship').setScale(0.55);
-            const sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
-            sailButton.setInteractive();
-            sailButton.on('pointerdown', () => completeTask(this) );
-            const tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
-            tackButton.setInteractive();
-            tackButton.on('pointerdown', () => completeTask(this) );
-            task=this.add.text(200,400,"Arrr! Raise the Sail, Matey!",{
-            font: "35px Arial",
-            fill: "#ff0044",
-            align: "center"
+        <script type="text/javascript" src="{{ url_for('static', filename='packages/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='packages/socket.io.js') }}"></script>
+    </head>
+    <body>
+        <script>
+            // Initialize the Phaser Game object and set default game window size
+            var game = new Phaser.Game({
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600
             });
 
-          };
+            var background;
+            var task="";
+            var shipSpeed = -2;
 
+            var sailButton,
+                tackButton;
 
-        function completeTask(){
-              shipSpeed= -4;
-              task.setText('Aye! A Handsome Job!')
-          };
+            function completeTask () {
+                shipSpeed= -4;
+                task.setText('Aye! A Handsome Job!')
+            };
 
+            var main = function () {};
+            main.prototype = {
+                preload: function () {
+                    // Load & Define our game assets
+                    this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
+                    this.load.image('background', "bg.png");
+                    this.load.image('ship',"ship.png");
+                    this.load.image('sail_btn', 'btn.jpg');
+                    this.load.image('tack_btn', 'tbtn.jpg');
+                },
+                create: function () {
+                    background = this.add.tileSprite(0, 0,1600,1170, 'background');
 
+                    this.add.sprite(350,90,'ship').setScale(0.55);
 
+                    sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
+                    sailButton.setInteractive();
+                    sailButton.on('pointerdown', completeTask);
 
-        function update () {
-          background.tilePositionX += shipSpeed;
-        };
+                    tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
+                    tackButton.setInteractive();
+                    tackButton.on('pointerdown', completeTask);
 
-    </script>
+                    task = this.add.text(200, 400, "Arrr! Raise the Sail, Matey!", {
+                        font: "35px Arial",
+                        fill: "#ff0044",
+                        align: "center"
+                    });
+                },
+                update: function () {
+                    background.tilePositionX += shipSpeed;
+                }
+            };
+            game.scene.add("main", main);
 
-    <script type="text/javascript">
-        
-        console.log('Task id: {{initial_task.task_id}}');
-        console.log('Task description: {{initial_task.description}}');
-        console.log('Task button text: {{initial_task.button_text}}');
-        console.log('Task button position: {{initial_task.button_position}}');
+            var lobbyID = "{{lobby_id}}",
+                userID = "{{user_id}}";
 
-    </script>
+            var initialTask = {};
 
-</body>
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            socket.nsp = "/game:" + "{{ lobby_id }}";
+
+            socket.on("game_start", function (data) {
+                data = data || {};
+
+                initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
+                console.log(initialTask);
+
+                game.scene.start("main");
+                
+                $('#loadingScreen').hide();
+            });
+        </script>
+
+        <div id="loadingScreen">
+            <div></div>
+            <label>WAITING FOR OTHER PLAYERS TO CONNECT</label>
+        </div>
+    </body>
 </html>

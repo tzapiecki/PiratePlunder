@@ -8,7 +8,15 @@ Written by Gabriel Brown
 
 # emitted by server when there are at least two clients in lobby 
 # and everyone has readied up
+GAME_LOAD = "game_load"
+
 GAME_START = "game_start"
+
+PLAYER_JOINED = "player_joined"
+
+PLAYER_DISCONNECTED = "player_disconnected"
+
+LOBBY_STATUS_CHANGED = "lobby_status_changed"
 
 
 """ In-game events """
