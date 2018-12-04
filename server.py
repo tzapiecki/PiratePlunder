@@ -128,46 +128,60 @@ Routes to pass around information
 """
 @app.route('/game/<lobby_id>/failed/<task_id>')
 def task_failed(lobby_id, task_id):
-
-    # emit a socket.io event that tells each user that a task
-    # was failed (and to damage the ship, etc etc)
-
-    # When socketio.emit() is used rather than just emit() under
-    # a socketio decorater, it's assumed to broadcast to everyone connected
+    """
+    Emit a socketio event that tells each user that a task
+    was failed, updates the ship and game accordingly,
+    and sends a new task to the client that made a call to this route
+    """
 
     # Since there could be multiple lobbies at once, I'm including the lobby_id
     # in the data sent with the event so that different lobbies won't get conflicting results
     socketio.emit(events.TASK_FAILED, { "lobby_id": lobby_id, "task_id": task_id })
 
-    # TODO: generate a new task and return that as a json response
+    # Generate a new task and return that as a json response
     # (the user who failed the task should send the request to this URL,
     # and therefore should get this response)
+    lobby = lobbies[lobby_id]
+    new_task = lobby.task_generator.new_task(task_id)
 
-    return make_response()
+    return make_response( { "new_task": new_task.serialize() } )
 
-@app.route('/game/<lobby_id>/input/<action_id>')
-def handle_input(lobby_id, action_id):
 
-    # TODO: check if the input successfully completed a task. 
+@app.route('/game/<lobby_id>/input/<task_id>')
+def handle_input(lobby_id, task_id):
+    """Check if the input completes one of the currently active tasks"""
+
+    lobby = lobbies[lobby_id]
+    current_task_id = lobby.task_generator.current_tasks.get(task_id, "not_current_task")
 
     # If it did complete a task, emit a socket.io event to that effect
-    # and return a json object with a new task and a boolean indicating
-    # the action was successful
+    # and return a json object with a new task
+    if task_id != "not_current_task":
 
-    # If the action did not complete a task, simply send back false in JSON response
-    # NOTE: If we decide to punish this action, then update the ship health and 
-    # emit an event to all players to let them know that the ship took damage before
-    # sending response
+        new_task = lobby.task_generator.new_task(current_task_id)
+        response_json = { "lobby_id": lobby_id, "completed_task_id": current_task_id, "new_task": new_task.serialize() }
+
+        socketio.emit(events.TASK_COMPLETE, response_json)
+
+
+    # If the action did not complete one of the current tasks, let every client 
+    # know that there was bad input. 
+    else:
+
+        # TODO: If we want to punish this, we should also reduce the ship health and
+        # check for a loss condition
+        socketio.emit(events.BAD_INPUT, { "lobby_id": lobby_id, "task_id": task_id })
 
     return make_response()
 
 
 if __name__ == '__main__':
 
-    # TODO: uncomment the lines below when not running with debug mode,
+    # Uncomment the lines below when not running with debug mode,
     # so you can at least get some feedback that the app has started
     # print("\n * App running with SocketIO")
     # print(" * Should be accessible on http://127.0.0.1:5000\n")
+
     socketio.run(app, debug=True)
 
 
