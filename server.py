@@ -9,10 +9,10 @@ import json
 from flask import Flask, render_template, make_response, request, redirect
 from flask_socketio import SocketIO, emit
 
-import events
-from lobby import Lobby
-from gameLobby import GameLobby
-from player import Player
+from server_classes import events
+from server_classes.lobby import Lobby
+from server_classes.gameLobby import GameLobby
+from server_classes.player import Player
 
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key

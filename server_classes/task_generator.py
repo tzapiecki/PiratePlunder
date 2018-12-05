@@ -4,7 +4,7 @@ possible given current conditions
 
 By Gabriel Brown, 11/30/2018
 """
-from task import Task
+from .task import Task
 import random
 
 class TaskGenerator:

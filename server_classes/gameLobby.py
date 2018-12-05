@@ -4,9 +4,9 @@ Game Lobby class to keep information about each player in a game
 Written by Trevor Zapiecki
 """
 
-from player import Player
-import events
-from task_generator import TaskGenerator
+from .player import Player
+from . import events
+from .task_generator import TaskGenerator
 
 class GameLobby:
     def __init__(self, lobby_id, numPlayers):
