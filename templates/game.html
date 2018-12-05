@@ -63,7 +63,7 @@
             function completeTask () {
                 shipSpeed= -4;
                 task.setText('Aye! A Handsome Job!')
-                bg_sound=this.sound.add('bgsound');
+                arr_sound.play();
 
             };
 
@@ -87,7 +87,6 @@
                     this.add.sprite(350,90,'ship').setScale(0.55);
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
-
                     bg_sound.play();
                     sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
                     sailButton.setInteractive();
