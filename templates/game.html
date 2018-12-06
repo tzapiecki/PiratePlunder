@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+
         <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet"> 
 
         <script type="text/javascript" src="{{ url_for('static', filename='packages/phaser.js') }}"></script>
@@ -56,17 +57,20 @@
             });
 
             var background;
-            var task="";
             var shipSpeed = -2;
 
             var sailButton,
                 tackButton;
 
+            var text;
+
+
             var personalTasks;
+
 
             function completeTask () {
                 shipSpeed= -4;
-                task.setText('Aye! A Handsome Job!')
+
                 arr_sound.play();
 
             };
@@ -88,11 +92,22 @@
                 },
                 create: function () {
                     background = this.add.tileSprite(0, 0,1600,1170, 'background');
-
+                    text = this.add.text(32, 32,style);
                     this.add.sprite(350,90,'ship').setScale(0.55);
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     bg_sound.play();
+
+                    sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
+                    sailButton.setInteractive();
+                    sailButton.on('pointerdown', completeTask);
+                    timedEvent = this.time.addEvent({ delay: 2000, callback: fadeTask, callbackScope: this });
+                    var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+                    task=this.add.text(200,400,initialTask['description'],style);
+                    tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
+                    tackButton.setInteractive();
+                    tackButton.on('pointerdown', completeTask);
+
 
                     
                     var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
@@ -108,22 +123,17 @@
                         taskText = this.add.text(xPos, yPos, task["button_text"], style);
                     }
 
-                    // sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
-                    // sailButton.setInteractive();
-                    // sailButton.on('pointerdown', completeTask);
+                    
 
-                    // tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
-                    // tackButton.setInteractive();
-                    // tackButton.on('pointerdown', completeTask);
+                    function fadeTask(){
+                      task.destroy();
+                      text.destroy();
+                    };
 
-                    task = this.add.text(200, 400, "Arrr! Raise the Sail, Matey!", {
-                        font: "35px Arial",
-                        fill: "#ff0044",
-                        align: "center"
-                    });
                 },
                 update: function () {
                     background.tilePositionX += shipSpeed;
+                     text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
                 }
             };
 
