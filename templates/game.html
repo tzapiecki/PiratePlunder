@@ -59,7 +59,13 @@
 
             var sailButton,
                 tackButton;
+<<<<<<< HEAD
             var text;
+=======
+
+            var personalTasks;
+
+>>>>>>> 6ca11067629e1ba8479b25c31445c437e48b9e9f
             function completeTask () {
                 shipSpeed= -4;
 
@@ -68,7 +74,10 @@
             };
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6ca11067629e1ba8479b25c31445c437e48b9e9f
             var main = function () {};
             main.prototype = {
                 preload: function () {
@@ -90,6 +99,7 @@
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     bg_sound.play();
+<<<<<<< HEAD
                     sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
                     sailButton.setInteractive();
                     sailButton.on('pointerdown', completeTask);
@@ -99,6 +109,30 @@
                     tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
                     tackButton.setInteractive();
                     tackButton.on('pointerdown', completeTask);
+=======
+
+                    
+                    var style = { font: "bold 16px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+
+                    for (var i = 0; i < personalTasks.length; i++) {
+
+                        task = personalTasks[i];
+
+                        var xPos = task["button_position"][0];
+                        var yPos = task["button_position"][1];
+
+
+                        taskText = this.add.text(xPos, yPos, task["button_text"], style);
+                    }
+
+                    // sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
+                    // sailButton.setInteractive();
+                    // sailButton.on('pointerdown', completeTask);
+
+                    // tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
+                    // tackButton.setInteractive();
+                    // tackButton.on('pointerdown', completeTask);
+>>>>>>> 6ca11067629e1ba8479b25c31445c437e48b9e9f
 
                     function fadeTask(){
                       task.destroy();
@@ -111,6 +145,10 @@
                      text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
                 }
             };
+
+            
+
+
             game.scene.add("main", main);
 
             var lobbyID = "{{lobby_id}}",
@@ -142,3 +180,20 @@
         </div>
     </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
