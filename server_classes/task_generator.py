@@ -2,7 +2,7 @@
 Used to generate new tasks that haven't been done before and are also
 possible given current conditions
 
-By Gabriel Brown, 11/30/2018
+Written by Gabriel Brown
 """
 from .task import Task
 import random
@@ -19,7 +19,7 @@ class TaskGenerator:
         task_id = i
         description = "Complete Task #" + str(i) + "!"
         button_text = "Push this button to complete Task #" + str(i)
-        button_position = (50, 50)
+        button_position = (50 + 10*i, 50 + 10*i)
 
         tasks.append(Task(task_id, description, button_text, button_position))
 
