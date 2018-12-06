@@ -120,7 +120,10 @@
                 data = data || {};
 
                 initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
+                personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
+
                 console.log(initialTask);
+                console.log(personalTasks);
 
                 game.scene.start("main");
 

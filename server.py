@@ -152,21 +152,43 @@ def game(lobby_id):
 
     gameLobby.add_player(player)
 
+
+
     def playerConnects():
+
         gameLobby.connectedPlayers += 1
+
         if gameLobby.connectedPlayers == gameLobby.numPlayers:
 
-            gameLobby.create_tasks()
 
-            serializedTasks = {}
+            gameLobby.assign_tasks()
+
+
+            # Serialize initial task assignments
+            serializedInitialTasks = {}
             for key in gameLobby.initial_task_assignments.keys():
                 task = gameLobby.initial_task_assignments[key]
-                serializedTasks[key] = task.serialize()
+                serializedInitialTasks[key] = task.serialize()
+
+            # Serialize tasks unique to each user
+            serializedUserTasks = {}
+            for user_id in gameLobby.user_tasks.keys():
+
+                user_task_list = gameLobby.user_tasks[user_id]
+                serialized_list = []
+                # If list doesn't work, could assign tasks like task0, task1, etc
+
+                for task in user_task_list:
+                    serialized_list.append(task.serialize())
+
+                serializedUserTasks[user_id] = serialized_list
+
 
             socketio.emit(
                 events.GAME_START,
                 {
-                    "initialTasks": serializedTasks
+                    "initialTasks": serializedInitialTasks,
+                    "userTasks": serializedUserTasks
                 },
                 namespace="/game:" + lobby_id
             )

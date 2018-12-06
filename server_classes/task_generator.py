@@ -9,10 +9,6 @@ import random
 
 class TaskGenerator:
 
-
-    # BIG TODO: swap lists of tasks to dictionaries that have task_ids as keys
-
-
     NUM_TASKS_PER_PLAYER = 3
 
     tasks = []  # TODO: fill this up with all possible tasks
