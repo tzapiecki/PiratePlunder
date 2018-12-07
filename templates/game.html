@@ -66,11 +66,14 @@
 
 
 
-            function completeTask () {
+            function completeTask(){
                 shipSpeed= -4;
-
+                console.log(task['task_id']);
                 arr_sound.play();
 
+            };
+
+            function fadeTask(){
             };
 
             var main = function () {};
@@ -125,11 +128,13 @@
 
 
                         taskText = this.add.text(xPos, yPos, task["button_text"], style);
+                        taskText.setInteractive();
+                        taskText.on('pointerdown',completeTask);
+
+
                     }
 
-                    function fadeTask(){
-                      text.destroy();
-                    };
+
 
                 },
                 update: function () {
