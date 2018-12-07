@@ -50,8 +50,8 @@
             // Initialize the Phaser Game object and set default game window size
             var game = new Phaser.Game({
                 type: Phaser.AUTO,
-                width: 800,
-                height: 600
+                width: 760,
+                height: 360
             });
 
             var background;
@@ -63,6 +63,8 @@
 
             var personalTasks;
             var task;
+
+
 
             function completeTask () {
                 shipSpeed= -4;
@@ -78,30 +80,37 @@
                     this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
                     this.load.image('background', "bg.png");
                     this.load.image('ship',"ship.png");
-                    this.load.image('sail_btn', 'btn.jpg');
-                    this.load.image('tack_btn', 'tbtn.jpg');
+                    this.load.image('btn','btn.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
 
 
+
                 },
                 create: function () {
-                    background = this.add.tileSprite(0, 0,1600,1170, 'background');
+                    background = this.add.tileSprite(0, 0,1440,648, 'background')
                     text = this.add.text(32, 32,style);
-                    this.add.sprite(350,90,'ship').setScale(0.55);
+                    this.add.sprite(350,110,'ship').setScale(0.38);
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     bg_sound.play();
+                    this.add.sprite(130,200,'btn').setScale(0.3);
+                    this.add.sprite(600,200,'btn').setScale(0.3);
+                    this.add.sprite(130,300,'btn').setScale(0.3);
+                    this.add.sprite(600,300,'btn').setScale(0.3);
 
-                    sailButton = this.add.sprite(130, 100,'sail_btn').setScale(0.3);
-                    sailButton.setInteractive();
-                    sailButton.on('pointerdown', completeTask);
+
+
+
+                    // sailButton = this.add.sprite(130, 300,'sail_btn').setScale(0.3);
+                    // sailButton.setInteractive();
+                    // sailButton.on('pointerdown', completeTask);
                     timedEvent = this.time.addEvent({ delay: 2000, callback: fadeTask, callbackScope: this });
                     var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
                     task=this.add.text(200,400,initialTask['description'],style);
-                    tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
-                    tackButton.setInteractive();
-                    tackButton.on('pointerdown', completeTask);
+                    // tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
+                    // tackButton.setInteractive();
+                    // tackButton.on('pointerdown', completeTask);
 
 
 
@@ -126,6 +135,8 @@
                 update: function () {
                     background.tilePositionX += shipSpeed;
                      text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
+
+
                 }
             };
 
