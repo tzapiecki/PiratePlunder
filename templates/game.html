@@ -66,15 +66,6 @@
 
 
 
-            function completeTask(){
-                shipSpeed= -4;
-                console.log(task['task_id']);
-                arr_sound.play();
-
-            };
-
-            function fadeTask(){
-            };
 
             var main = function () {};
             main.prototype = {
@@ -110,37 +101,49 @@
                     // sailButton.on('pointerdown', completeTask);
                     timedEvent = this.time.addEvent({ delay: 2000, callback: fadeTask, callbackScope: this });
                     var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-                    task=this.add.text(200,400,initialTask['description'],style);
+                    task=this.add.text(210,200,initialTask['description'],style);
                     // tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
                     // tackButton.setInteractive();
                     // tackButton.on('pointerdown', completeTask);
 
+                    function fadeTask(){
+                      text.destroy();
+                      task.destroy();
+                    };
 
 
                     var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 
                     for (var i = 0; i < personalTasks.length; i++) {
-
-                        task = personalTasks[i];
-
-                        var xPos = task["button_position"][0];
-                        var yPos = task["button_position"][1];
-
-
-                        taskText = this.add.text(xPos, yPos, task["button_text"], style);
+                        var taskText;
+                        var p_task;
+                        var id;
+                        p_task = personalTasks[i];
+                        id=p_task['task_id']
+                        var xPos = p_task["button_position"][0];
+                        var yPos = p_task["button_position"][1];
+                        taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
                         taskText.setInteractive();
-                        taskText.on('pointerdown',completeTask);
+                        taskText.on('pointerdown',() => completeTask(id=id));
+                  }
 
 
-                    }
+                    function completeTask(id){
+                        shipSpeed= -4;
+                        console.log(id);
+                        arr_sound.play();
+
+                    };
+
+
+
 
 
 
                 },
                 update: function () {
                     background.tilePositionX += shipSpeed;
-                     text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
-
+                    text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
 
                 }
             };
@@ -163,10 +166,6 @@
 
                 initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
-
-                console.log(initialTask);
-                console.log(personalTasks);
-
                 game.scene.start("main");
 
                 $('#loadingScreen').hide();

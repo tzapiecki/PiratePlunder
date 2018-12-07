@@ -16,12 +16,12 @@ class TaskGenerator:
     tasks = []
 
     # Initialize all our custom tasks
-    # Note: would be better to either randomnly generate these or 
+    # Note: would be better to either randomnly generate these or
     # store them in a text file or database or something
-    tasks.append(Task(0, "Rocks incoming! HARD TO PORT!", "Turn Portside", (50, 10)))
-    tasks.append(Task(1, "To the east, an enemy vessel! Take us Starboard!", "Turn Starboard", (20, 30)))
-    tasks.append(Task(2, "There's a rough wind coming, trim the jib before it hits us.", "Pull down Jib", (70, 50)))
-    tasks.append(Task(3, "We're going the wrong direction. Spin the tiller! ", "Turn Tiller", (50, 70)))
+    tasks.append(Task(0, "Rocks incoming! HARD TO PORT!", "Turn Portside", (100, 95)))
+    tasks.append(Task(1, "To the east, an enemy vessel! Take us Starboard!", "Turn Starboard", (600, 95)))
+    tasks.append(Task(2, "There's a rough wind coming, trim the jib before it hits us.", "Pull down Jib", (620, 110)))
+    tasks.append(Task(3, "We're going the wrong direction. Spin the tiller! ", "Turn Tiller", (130, 70)))
     tasks.append(Task(4, "The enemy's about to fire! Take cover and save yourself!", "Take cover", (50, 100)))
     tasks.append(Task(5, "Load the cannons and prepare to fire!", "Load cannons", (70, 100)))
     tasks.append(Task(6, "Arr, there goes my monkey. Grab him for me, will you?", "Catch Monkey", (100, 100)))
@@ -133,13 +133,5 @@ class TaskGenerator:
                 next_index = random.randrange(0, len(usable_task_keys))
                 next_task_key = usable_task_keys[next_index]
 
-            # Add new task to the current list 
+            # Add new task to the current list
             self.current_tasks[next_task_key] = self.usable_tasks[next_task_key]
-
-
-
-
-
-
-
-
