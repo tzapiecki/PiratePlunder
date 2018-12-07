@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-
-        <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet"> 
-
+        <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet">
         <script type="text/javascript" src="{{ url_for('static', filename='packages/phaser.js') }}"></script>
         <style>
             * {
@@ -61,12 +59,9 @@
 
             var sailButton,
                 tackButton;
-
             var text;
 
-
             var personalTasks;
-
 
             function completeTask () {
                 shipSpeed= -4;
@@ -74,7 +69,6 @@
                 arr_sound.play();
 
             };
-
 
             var main = function () {};
             main.prototype = {
@@ -109,8 +103,8 @@
                     tackButton.on('pointerdown', completeTask);
 
 
-                    
-                    var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+
+                    var style = { font: "bold 16px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 
                     for (var i = 0; i < personalTasks.length; i++) {
 
@@ -122,8 +116,6 @@
 
                         taskText = this.add.text(xPos, yPos, task["button_text"], style);
                     }
-
-                    
 
                     function fadeTask(){
                       task.destroy();
@@ -137,7 +129,7 @@
                 }
             };
 
-            
+
 
 
             game.scene.add("main", main);
@@ -171,20 +163,3 @@
         </div>
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
