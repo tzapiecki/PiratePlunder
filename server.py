@@ -2,7 +2,7 @@
 A flask server that emits asynchronous events to clients
 using SocketIO
 
-Written by Gabriel Brown
+Written by Gabriel Brown and Trevor Zapiecki
 """
 import json
 
@@ -161,7 +161,7 @@ def game(lobby_id):
         if gameLobby.connectedPlayers == gameLobby.numPlayers:
 
 
-            gameLobby.assign_tasks()
+            gameLobby.start_game()
 
 
             # Serialize initial task assignments

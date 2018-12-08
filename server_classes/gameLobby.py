@@ -1,7 +1,7 @@
 """
 Game Lobby class to keep information about each player in a game
 
-Written by Trevor Zapiecki
+Written by Trevor Zapiecki and Gabriel Brown
 """
 
 from .player import Player
@@ -24,10 +24,17 @@ class GameLobby:
         # user can complete (should appear with buttons on their screen)
         self.user_tasks = {}
 
+
     def add_player(self, player):
         self.players[player.user_id] = player
 
     
+    def start_game(self):
+        """This should be called whenever all the players connect to a game for the first time"""
+
+        self.task_generator = TaskGenerator(len(self.players))
+        self.assign_tasks()
+
 
     def assign_tasks(self):
         """
@@ -35,8 +42,6 @@ class GameLobby:
         as well as the list of tasks that they are able to complete 
         (which buttons should appear on their screen)
         """
-
-        self.task_generator = TaskGenerator(len(self.players))
 
         player_cookies = list(self.players.keys())
         initial_task_ids = list(self.task_generator.current_tasks.keys())
