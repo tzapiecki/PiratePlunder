@@ -15,10 +15,7 @@ class Task:
 
     def __str__(self):
 
-        print("\nTask_id: " + str(self.task_id))
-        print("Description: " + self.description)
-        print("Button label: " + self.button_text)
-        print("Button position:" + str(self.button_position))
+        return "\nTask_id: " + str(self.task_id) + "\nDescription: " + self.description + "\nButton label: " + self.button_text + "\nButton position:" + str(self.button_position)
 
     def serialize(self):
 
