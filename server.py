@@ -28,6 +28,7 @@ stagingLobbies = {}   # Key: lobby_id, Value: lobby object
 gameLobbies = {}
 tasks = [] 
 
+
 """
 Routes to new pages
 """
@@ -35,6 +36,7 @@ Routes to new pages
 def index():
 
     return app.send_static_file('login.html')
+
 
 @app.route('/lobby/<lobby_id>', methods=['GET', 'POST'])
 def lobby(lobby_id):
@@ -132,6 +134,7 @@ def lobby(lobby_id):
 
         return response
 
+
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
     gameLobby = gameLobbies.get(lobby_id, "no_lobby")
@@ -222,6 +225,8 @@ def task_failed(lobby_id, task_id):
 
         # Reset for next game and let every client in lobby know that game is over
         gameLobby.has_lost = False
+        gameLobby.task_generator.new_section()
+
         socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
         # I don't think we want to redirect here. We probably want to play some sort
@@ -262,13 +267,10 @@ def handle_input(lobby_id, task_id):
 
         if gameLobby.section_complete:
 
-
-            # TODO: call a task_generator method to update usable_tasks
-            # and current tasks. Could maybe call update_usable_tasks(), clear
-            # current_tasks, and then call generate_initial_tasks()
-
             # Reset for next section and let every player know they were successful
             gameLobby.section_complete = False
+            gameLobby.task_generator.new_section()
+
             socketio.emit(events.SECTION_COMPLETE, namespace="/game:" + lobby_id)
 
         else:
@@ -292,12 +294,10 @@ def handle_input(lobby_id, task_id):
 
         if gameLobby.has_lost:
 
-            # TODO: call a task_generator method to update usable_tasks
-            # and current tasks. Could maybe call update_usable_tasks(), clear
-            # current_tasks, and then call generate_initial_tasks()
-
             # Reset for next game and let every client in lobby know that game is over
             gameLobby.has_lost = False
+            gameLobby.task_generator.new_section()
+
             socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
         else:

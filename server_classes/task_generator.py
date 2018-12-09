@@ -135,3 +135,25 @@ class TaskGenerator:
 
             # Add new task to the current list
             self.current_tasks[next_task_key] = self.usable_tasks[next_task_key]
+
+
+
+    def new_section(self):
+        """Update usable_tasks and set up initial tasks"""
+
+        self.update_usable_tasks()
+        self.current_tasks.clear()
+        self.generate_initial_tasks()
+
+
+
+
+
+
+
+
+
+
+
+
+
