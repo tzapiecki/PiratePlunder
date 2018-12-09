@@ -66,12 +66,6 @@
 
 
 
-            function completeTask () {
-                shipSpeed= -4;
-
-                arr_sound.play();
-
-            };
 
             var main = function () {};
             main.prototype = {
@@ -107,35 +101,75 @@
                     // sailButton.on('pointerdown', completeTask);
                     timedEvent = this.time.addEvent({ delay: 2000, callback: fadeTask, callbackScope: this });
                     var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-                    task=this.add.text(200,400,initialTask['description'],style);
+                    task=this.add.text(210,200,initialTask['description'],style);
                     // tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
                     // tackButton.setInteractive();
                     // tackButton.on('pointerdown', completeTask);
 
+                    function fadeTask(){
+                      text.destroy();
+                      task.destroy();
+                    };
 
 
                     var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 
                     for (var i = 0; i < personalTasks.length; i++) {
 
-                        task = personalTasks[i];
+                        var taskText;
+                        var p_task;
+                        var id;
+                        var xPos;
+                        var yPos;
 
-                        var xPos = task["button_position"][0];
-                        var yPos = task["button_position"][1];
+                        p_task = personalTasks[i];
+                        id = p_task['task_id']
+
+                        if (i === 0) {
+                            xPos = 130;
+                            yPos = 200;
+                        }
+                        else if (i === 1) {
+                            xPos = 600;
+                            yPos = 200;
+                        }
+                        else if (i === 2) {
+                            xPos = 130;
+                            yPos = 300;
+                        }
+                        else if (i === 3) {
+                            xPos = 600;
+                            yPos = 300;
+                        }
+                        else {
+
+                            console.log("Too many tasks per player. Setting buttons to passed in positions");
+                            xPos = p_task["button_position"][0];
+                            yPos = p_task["button_position"][1];
+                        }
+                        
+                        taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
+                        taskText.setInteractive();
+                        taskText.on('pointerdown',() => completeTask(id=id));
+                  }
 
 
-                        taskText = this.add.text(xPos, yPos, task["button_text"], style);
-                    }
+                    function completeTask(id){
+                        shipSpeed= -4;
+                        console.log(id);
+                        arr_sound.play();
 
-                    function fadeTask(){
-                      text.destroy();
                     };
+
+
+
+
+
 
                 },
                 update: function () {
                     background.tilePositionX += shipSpeed;
-                     text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
-
+                    text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
 
                 }
             };
@@ -158,10 +192,6 @@
 
                 initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
-
-                console.log(initialTask);
-                console.log(personalTasks);
-
                 game.scene.start("main");
 
                 $('#loadingScreen').hide();

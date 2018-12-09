@@ -9,19 +9,43 @@ import random
 
 class TaskGenerator:
 
-    NUM_TASKS_PER_PLAYER = 3
+    NUM_TASKS_PER_PLAYER = 4
 
-    tasks = []  # TODO: fill this up with all possible tasks
+    # The master list of tasks. A selection of these are assigned to usable tasks,
+    # based on the number of players and how many tasks should be assigned to each player
+    tasks = []
 
-    # fill with sample task data
-    for i in range(20):
+    # Initialize all our custom tasks
+    # Note: would be better to either randomnly generate these or
+    # store them in a text file or database or something
+    tasks.append(Task(0, "Rocks incoming! HARD TO PORT!", "Turn Portside", (100, 95)))
+    tasks.append(Task(1, "To the east, an enemy vessel! Take us Starboard!", "Turn Starboard", (600, 95)))
+    tasks.append(Task(2, "There's a rough wind coming, trim the jib before it hits us.", "Pull down Jib", (620, 110)))
+    tasks.append(Task(3, "We're going the wrong direction. Spin the tiller! ", "Turn Tiller", (130, 70)))
+    tasks.append(Task(4, "The enemy's about to fire! Take cover and save yourself!", "Take cover", (50, 100)))
+    tasks.append(Task(5, "Load the cannons and prepare to fire!", "Load cannons", (70, 100)))
+    tasks.append(Task(6, "Arr, there goes my monkey. Grab him for me, will you?", "Catch Monkey", (100, 100)))
+    tasks.append(Task(7, "The cannons be ready! FIRE AWAY!", "Fire the cannons", (50, 10)))
+    tasks.append(Task(8, "Your parrot looks a bit lonely, Give him some love, will ya?", "Pet the Parrot", (50, 10)))
+    tasks.append(Task(9, "What arrrrrr ya lookin at, huh? You better keep your peepers away from me eyepatch, or I'll gut ya.", "Look away from eyepatch", (50, 10)))
+    tasks.append(Task(10, "We've got a traitor on board. Ready the plank.", "Lower the plank", (50, 10)))
+    tasks.append(Task(11, "Is that a real gold doubloon? Bite it and tell me!", "Bite the doubloon", (50, 10)))
+    tasks.append(Task(12, "Arrrr, what lies ahead? Break out your telescope and tell me what's on the horizon.", "Scan the horizon", (50, 10)))
+    tasks.append(Task(13, "Storm ahead. Best give Davey Jones his dues, else he'll be taking more souls tonight", "Drop Dave Jones offering into the sea", (50, 10)))
+    tasks.append(Task(14, "We're out of cannonballs! Fill the cannons with whatever you can find!", "Load cannons with silverware", (50, 10)))
+    tasks.append(Task(15, "A brawl be breakin out on the main deck. Unload your pistol and silence that rabble.", "Stop brawl", (50, 10)))
+    tasks.append(Task(16, "That lad has quite a bounty! SEIZE HIM!", "Capture bounty", (50, 10)))
 
-        task_id = i
-        description = "Complete Task #" + str(i) + "!"
-        button_text = "Push this button to complete Task #" + str(i)
-        button_position = (50 + 10*i, 50 + 10*i)
 
-        tasks.append(Task(task_id, description, button_text, button_position))
+    # # fill with sample task data
+    # for i in range(7, 12):
+
+    #     task_id = i
+    #     description = "Complete Task #" + str(i) + "!"
+    #     button_text = "Push this button to complete Task #" + str(i)
+    #     button_position = (50 + 10*i, 50 + 10*i)
+
+    #     tasks.append(Task(task_id, description, button_text, button_position))
 
 
     def __init__(self, num_players):
@@ -109,8 +133,22 @@ class TaskGenerator:
                 next_index = random.randrange(0, len(usable_task_keys))
                 next_task_key = usable_task_keys[next_index]
 
-            # Add new task to the current list 
+            # Add new task to the current list
             self.current_tasks[next_task_key] = self.usable_tasks[next_task_key]
+
+
+
+    def new_section(self):
+        """Update usable_tasks and set up initial tasks"""
+
+        self.update_usable_tasks()
+        self.current_tasks.clear()
+        self.generate_initial_tasks()
+
+
+
+
+
 
 
 

@@ -24,12 +24,19 @@
                     lobbyMembersDiv.empty();
 
                     for (let i = 0; i < numPlayers; i++) {
-                        let newMember = $("<div>");
+                        let memberContainer = $("<div>"),
+                            newMember = $("<div>");
+
+                        memberContainer.append(newMember)
+
+                        memberContainer.addClass('memberContainer');
                         newMember.addClass('lobbyMember');
+
                         if (i < numReadyPlayers) {
                             newMember.addClass('readyMember');
                         }
-                        lobbyMembersDiv.append(newMember);
+                        
+                        lobbyMembersDiv.append(memberContainer);
                     }
                 }
             };
@@ -72,7 +79,9 @@
     <body>
         <div id="lobbyPage">
             <button class="backButton" onclick="window.location.href = '/';">⬅</button>
-            <label class="title">{{ lobby_id }}</label>
+            <div class="title">
+                <label>{{ lobby_id }}</label>
+            </div>
 
             <div class="lobbyMembers"></div>
 

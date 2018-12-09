@@ -2,7 +2,7 @@
 A flask server that emits asynchronous events to clients
 using SocketIO
 
-Written by Gabriel Brown
+Written by Gabriel Brown and Trevor Zapiecki
 """
 import json
 
@@ -28,6 +28,7 @@ stagingLobbies = {}   # Key: lobby_id, Value: lobby object
 gameLobbies = {}
 tasks = [] 
 
+
 """
 Routes to new pages
 """
@@ -35,6 +36,7 @@ Routes to new pages
 def index():
 
     return app.send_static_file('login.html')
+
 
 @app.route('/lobby/<lobby_id>', methods=['GET', 'POST'])
 def lobby(lobby_id):
@@ -132,6 +134,7 @@ def lobby(lobby_id):
 
         return response
 
+
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
     gameLobby = gameLobbies.get(lobby_id, "no_lobby")
@@ -161,7 +164,7 @@ def game(lobby_id):
         if gameLobby.connectedPlayers == gameLobby.numPlayers:
 
 
-            gameLobby.assign_tasks()
+            gameLobby.start_game()
 
 
             # Serialize initial task assignments
@@ -208,45 +211,101 @@ def task_failed(lobby_id, task_id):
     """
     Emit a socketio event that tells each user that a task
     was failed, updates the ship and game accordingly,
-    and sends a new task to the client that made a call to this route
+    and sends a new task to the client that made a call to this route.
+
+    This route should be used when a client makes an ajax call to 
+    tell the server that the user didn't complete a task in time.
     """
 
-    socketio.emit(events.TASK_FAILED, { "task_id": task_id }, namespace="/game:" + lobby_id)
+    # Update the game lobby, and check for a loss condition
+    gameLobby = gameLobbies[lobby_id]
+    gameLobby.task_failed()
 
-    # Generate a new task and return that as a json response
-    # (the user who failed the task should send the request to this URL,
-    # and therefore should get this response)
-    lobby = lobbies[lobby_id]
-    new_task = lobby.task_generator.new_task(task_id)
+    if gameLobby.has_lost:
 
-    return make_response( { "new_task": new_task.serialize() } )
+        # Reset for next game and let every client in lobby know that game is over
+        gameLobby.has_lost = False
+        gameLobby.task_generator.new_section()
+
+        socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
+
+        # I don't think we want to redirect here. We probably want to play some sort
+        # of animation on the client side and let users click a button to decide
+        # whether they want to quit to the main page or stay in the lobby.
+        # Plus, if we're going to redirect that would need to be a socket event
+        return make_response()
+
+    else:
+
+        # Let everyone know that a task was failed.
+        # We don't need to include a task_id, because tasks should be unique
+        # and the client that sends and ajax call to this route would be the 
+        # who failed, and therefore the only one who needs a new task
+        socketio.emit(events.TASK_FAILED, namespace="/game:" + lobby_id)
+
+        # Generate a new task and return that as a json response
+        # (the user who failed the task should send the request to this URL,
+        # and therefore should get this response)
+        new_task = gameLobby.task_generator.new_task(task_id)
+
+        return make_response( { "new_task": new_task.serialize() } )
 
 
 @app.route('/game/<lobby_id>/input/<task_id>')
 def handle_input(lobby_id, task_id):
     """Check if the input completes one of the currently active tasks"""
 
-    lobby = lobbies[lobby_id]
-    current_task_id = lobby.task_generator.current_tasks.get(task_id, "not_current_task")
+    gameLobby = gameLobbies[lobby_id]
+    current_task_id = gameLobby.task_generator.current_tasks.get(task_id, "not_current_task")
 
     # If it did complete a task, emit a socket.io event to that effect
     # and return a json object with a new task
     if task_id != "not_current_task":
 
-        new_task = lobby.task_generator.new_task(current_task_id)
-        response_json = { "completed_task_id": current_task_id, "new_task": new_task.serialize() }
+        # Update gameLobby and check for win condition
+        gameLobby.task_completed()
 
-        socketio.emit(events.TASK_COMPLETE, response_json, namespace="/game:" + lobby_id)
+        if gameLobby.section_complete:
+
+            # Reset for next section and let every player know they were successful
+            gameLobby.section_complete = False
+            gameLobby.task_generator.new_section()
+
+            socketio.emit(events.SECTION_COMPLETE, namespace="/game:" + lobby_id)
+
+        else:
+
+            # Generate a new task and let every player know both which task was
+            # completed and what the next one is. Every player needs to know this
+            # info because any one of them could have had the old task, and will
+            # need to know what to replace it with
+            new_task = gameLobby.task_generator.new_task(current_task_id)
+            response_json = { "completed_task_id": current_task_id, "new_task": new_task.serialize() }
+
+            socketio.emit(events.TASK_COMPLETE, response_json, namespace="/game:" + lobby_id)
 
 
     # If the action did not complete one of the current tasks, let every client 
     # know that there was bad input. 
     else:
+        
+        # Update ship health and check for a loss condition
+        gameLobby.bad_input()
 
-        # TODO: If we want to punish this, we should also reduce the ship health and
-        # check for a loss condition
-        socketio.emit(events.BAD_INPUT, { "task_id": task_id }, namespace="/game:" + lobby_id)
+        if gameLobby.has_lost:
 
+            # Reset for next game and let every client in lobby know that game is over
+            gameLobby.has_lost = False
+            gameLobby.task_generator.new_section()
+
+            socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
+
+        else:
+
+            # Let every player know that there was bad input, and show some visual indication
+            socketio.emit(events.BAD_INPUT, { "task_id": task_id }, namespace="/game:" + lobby_id)
+
+    
     return make_response()
 
 

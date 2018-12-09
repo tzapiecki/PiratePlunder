@@ -107,13 +107,18 @@
     top: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
+    background-color: #1b3aa1;
+    border-radius: 1rem;
     text-align: center;
+    height: 5.4rem;
+    padding: 1rem 0 0.5rem;
+}
+
+#lobbyPage .title label {
+    font-size: 4rem;
+    font-family: 'Sedgwick Ave', cursive;
     background-color: #1b3aa1;
     color: white;
-    font-family: 'Sedgwick Ave', cursive;
-    padding: 1rem 1rem 0rem 1rem;
-    font-size: 4rem;
-    border-radius: 1rem;
 }
 
 #lobbyPage .ready {
@@ -154,17 +159,27 @@
     width: 75%;
     height: 50%;
     border: 2px solid black;
+    display: table;
+}
+
+#lobbyPage .memberContainer {
+    display: inline-block;
+    padding: 2rem;
+    width: auto;
 }
 
 #lobbyPage .lobbyMember {
-    display: inline-block;
-    width: 6rem;
-    height: 6rem;
-    border-radius: 50%;
-    margin: 2rem;
+    display: block;
+    width: 5.5rem;
+    height: 5.5rem;
     background-color: black;
+    border-radius: 50%;
+    border: 0.25rem solid #850000;
+    box-shadow: 0 0 0.2rem 0.2rem #000000, 0 0 2rem 0.1rem #850000 inset;
 }
 
 #lobbyPage .readyMember {
-    background-color: green;
+    border-color: #007413;
+    background-color: #ffffff;
+    box-shadow: 0 0 0.2rem 0.2rem #000000, 0 0 2rem 0.1rem #007413 inset;
 }
