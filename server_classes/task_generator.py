@@ -69,6 +69,11 @@ class TaskGenerator:
         """
         Randomnly pick the next task from usable_tasks, provided it's not currently active
         """
+        print("Current tasks: ")
+        for task_id in self.current_tasks.keys():
+
+            print(task_id)
+
 
         new_task = self.current_tasks[old_task_id]
 

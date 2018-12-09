@@ -64,7 +64,7 @@
             var personalTasks;
             var task;
 
-
+            var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
 
 
@@ -151,61 +151,28 @@
                         
                         taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
                         taskText.setInteractive();
+                        taskText.on("pointerdown", completeTask);
 
-
-                        // This is absolutely terrible. We seriously need to do something better than this, but I guess it works for now. I'll use this to try and test server routes
-                        if (i === 0) {
-                            taskText.on('pointerdown', completeTask0);
-                        }
-                        else if (i === 1) {
-                            taskText.on('pointerdown', completeTask1);
-                        }
-                        else if (i === 2) {
-                            taskText.on('pointerdown', completeTask2);
-                        }
-                        else if (i === 3) {
-                            taskText.on('pointerdown', completeTask3);
-                        }
-                        else {
-                            taskText.on('pointerdown', completeUnknownTask);
-                        }
+                        // To make event handlers work properly
+                        personalTaskText.set(p_task["button_text"], id);
                   }
 
-
-                    function completeTask0(){
+                    function completeTask() {
                         shipSpeed= -4;
                         arr_sound.play();
-                        console.log(personalTasks[0]["task_id"]);
+        
+                        var taskID = personalTaskText.get(this.text);
+
+                        /// 'game/<lobby_id>/input/<task_id>'
+                        $.ajax({
+                            url: window.location.href + '/input/' + taskID, 
+                            method: 'POST',
+                            success: function() {
+
+                                console.log('Successfully sent input ajax call!');
+                            }
+                        });
                     }
-
-                    function completeTask1(){
-                        shipSpeed= -4;
-                        arr_sound.play();
-                        console.log(personalTasks[1]["task_id"]);
-
-                    }
-
-                    function completeTask2(){
-                        shipSpeed= -4;
-                        arr_sound.play();
-                        console.log(personalTasks[2]["task_id"]);
-
-                    }
-
-                    function completeTask3(){
-                        shipSpeed= -4;
-                        arr_sound.play();
-                        console.log(personalTasks[3]["task_id"]);
-
-                    }
-
-                    function completeUnknownTask() {
-                        console.log("More tasks than event handlers!");
-                    }
-
-
-
-
 
 
                 },
@@ -215,8 +182,6 @@
 
                 }
             };
-
-
 
 
             game.scene.add("main", main);
@@ -229,6 +194,9 @@
             var socket = io.connect('http://' + document.domain + ':' + location.port);
             socket.nsp = "/game:" + "{{ lobby_id }}";
 
+
+
+            // Add in socketio event handlers
             socket.on("game_start", function (data) {
                 data = data || {};
 
@@ -238,6 +206,40 @@
 
                 $('#loadingScreen').hide();
             });
+
+
+            socket.on("bad_input", function(data) {
+
+                console.log('Bad input event recieved');
+
+            });
+
+
+            socket.on("task_failed", function(data) {
+
+                console.log('Task failed event recieved');
+
+            });
+
+            socket.on("task_complete", function(data) {
+
+                console.log('Task complete event recieved');
+
+            });
+
+            socket.on("section_complete", function(data) {
+
+                console.log('Section complete event recieved');
+
+            });
+
+            socket.on("game_over", function(data) {
+
+                console.log('Game over event recieved');
+
+            });
+
+
         </script>
 
         <div id="loadingScreen">
