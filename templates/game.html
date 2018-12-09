@@ -50,8 +50,8 @@
             // Initialize the Phaser Game object and set default game window size
             var game = new Phaser.Game({
                 type: Phaser.AUTO,
-                width: 1400,
-                height: 899
+                width: 800,
+                height: 500,
             });
 
             var background;
@@ -63,9 +63,6 @@
 
             var personalTasks;
             var task;
-
-
-
 
             var main = function () {};
             main.prototype = {
@@ -82,18 +79,17 @@
 
                 },
                 create: function () {
-                    background = this.add.tileSprite(0, 0,1440,648, 'background')
+                    background = this.add.sprite(600,350, 'background');
+                    // this.background.anchor.set(0.5);
                     text = this.add.text(32, 32,style);
                     this.add.sprite(350,110,'ship').setScale(0.38);
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     bg_sound.play();
-                    this.add.sprite(130,200,'btn').setScale(0.3);
-                    this.add.sprite(600,200,'btn').setScale(0.3);
-                    this.add.sprite(130,300,'btn').setScale(0.3);
-                    this.add.sprite(600,300,'btn').setScale(0.3);
-
-
+                    this.add.sprite(130,200,'btn').setScale(0.8);
+                    this.add.sprite(600,200,'btn').setScale(0.8);
+                    this.add.sprite(130,300,'btn').setScale(0.8);
+                    this.add.sprite(600,300,'btn').setScale(0.8);
 
 
                     // sailButton = this.add.sprite(130, 300,'sail_btn').setScale(0.3);
