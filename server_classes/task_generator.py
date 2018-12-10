@@ -1,7 +1,6 @@
 """
 Used to generate new tasks that haven't been done before and are also
 possible given current conditions
-
 Written by Gabriel Brown
 """
 from .task import Task
@@ -22,6 +21,7 @@ class TaskGenerator:
     tasks.append(Task(1, "To the east, an enemy vessel! Take us Starboard!", "Turn Starboard", (600, 95)))
     tasks.append(Task(2, "There's a rough wind coming, trim the jib before it hits us.", "Pull down Jib", (620, 110)))
     tasks.append(Task(3, "We're going the wrong direction. Spin the tiller! ", "Turn Tiller", (130, 70)))
+    tasks.append(Task(4, "The enemy's about to fire! Take cover and save yourself!", "Take cover", (50, 100)))
     tasks.append(Task(5, "Load the cannons and prepare to fire!", "Load cannons", (70, 100)))
     tasks.append(Task(6, "Arr, there goes my monkey. Grab him for me, will you?", "Catch Monkey", (100, 100)))
     tasks.append(Task(7, "The cannons be ready! FIRE AWAY!", "Fire the cannons", (50, 10)))
@@ -71,14 +71,16 @@ class TaskGenerator:
 
         new_task = self.current_tasks[old_task_id]
 
+        usable_task_keys = list(self.usable_tasks.keys())
+
         while new_task.task_id in self.current_tasks:
 
             next_index = random.randrange(0, len(self.usable_tasks))
-            new_task = usable_tasks[next_index]
+            new_task = self.usable_tasks[usable_task_keys[next_index]]
 
         # Remove the old task and keep track of new one
-        current_tasks.remove(old_task_id)
-        current_tasks[new_task.task_id] = new_task
+        self.current_tasks.pop(old_task_id)
+        self.current_tasks[new_task.task_id] = new_task
 
         return new_task
 
@@ -134,3 +136,12 @@ class TaskGenerator:
 
             # Add new task to the current list
             self.current_tasks[next_task_key] = self.usable_tasks[next_task_key]
+
+
+
+    def new_section(self):
+        """Update usable_tasks and set up initial tasks"""
+
+        self.update_usable_tasks()
+        self.current_tasks.clear()
+        self.generate_initial_tasks()
