@@ -22,7 +22,6 @@ class TaskGenerator:
     tasks.append(Task(1, "To the east, an enemy vessel! Take us Starboard!", "Turn Starboard", (600, 95)))
     tasks.append(Task(2, "There's a rough wind coming, trim the jib before it hits us.", "Pull down Jib", (620, 110)))
     tasks.append(Task(3, "We're going the wrong direction. Spin the tiller! ", "Turn Tiller", (130, 70)))
-    tasks.append(Task(4, "The enemy's about to fire! Take cover and save yourself!", "Take cover", (50, 100)))
     tasks.append(Task(5, "Load the cannons and prepare to fire!", "Load cannons", (70, 100)))
     tasks.append(Task(6, "Arr, there goes my monkey. Grab him for me, will you?", "Catch Monkey", (100, 100)))
     tasks.append(Task(7, "The cannons be ready! FIRE AWAY!", "Fire the cannons", (50, 10)))

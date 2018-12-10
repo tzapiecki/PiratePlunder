@@ -114,18 +114,32 @@
 
                     var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
 
+                    var taskTexts=new Map();
+
                     for (var i = 0; i < personalTasks.length; i++) {
-                        var taskText;
                         var p_task;
                         var id;
                         p_task = personalTasks[i];
                         id=p_task['task_id']
                         var xPos = p_task["button_position"][0];
                         var yPos = p_task["button_position"][1];
-                        taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
-                        taskText.setInteractive();
-                        taskText.on('pointerdown',() => completeTask(id=id));
+                        taskTexts.set(this.add.text(xPos, yPos, p_task["button_text"]),id);
+
+
+
                   }
+
+                  console.log(taskTexts);
+
+                  for(val in taskTexts.values()){
+                    var tid;
+                    tid=val;
+                    console.log(tid);
+                    val.setInteractive();
+                    val.on('pointerdown',() => completeTask(id=tid));
+                  }
+
+
 
 
                     function completeTask(id){
@@ -134,9 +148,6 @@
                         arr_sound.play();
 
                     };
-
-
-
 
 
 
