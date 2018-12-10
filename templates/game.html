@@ -64,10 +64,9 @@
             var personalTasks = [];
             var task;
 
+
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
-
-
-
+            
             var main = function () {};
             main.prototype = {
                 preload: function () {
@@ -90,12 +89,10 @@
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     bg_sound.play();
-                    this.add.sprite(130,200,'btn').setScale(0.3);
-                    this.add.sprite(600,200,'btn').setScale(0.3);
-                    this.add.sprite(130,300,'btn').setScale(0.3);
-                    this.add.sprite(600,300,'btn').setScale(0.3);
-
-
+                    this.add.sprite(130,200,'btn').setScale(0.8);
+                    this.add.sprite(600,200,'btn').setScale(0.8);
+                    this.add.sprite(130,300,'btn').setScale(0.8);
+                    this.add.sprite(600,300,'btn').setScale(0.8);
 
 
                     // sailButton = this.add.sprite(130, 300,'sail_btn').setScale(0.3);
