@@ -206,7 +206,7 @@ def game(lobby_id):
 """
 Routes to pass around information
 """
-@app.route('/game/<lobby_id>/failed/<task_id>')
+@app.route('/game/<lobby_id>/failed/<task_id>', methods=['POST'])
 def task_failed(lobby_id, task_id):
     """
     Emit a socketio event that tells each user that a task
@@ -220,6 +220,8 @@ def task_failed(lobby_id, task_id):
     # Update the game lobby, and check for a loss condition
     gameLobby = gameLobbies[lobby_id]
     gameLobby.task_failed()
+
+    print("\n\nShip health: " + str(gameLobby.ship_health) + "\n\n")
 
     if gameLobby.has_lost:
 
@@ -251,16 +253,22 @@ def task_failed(lobby_id, task_id):
         return make_response( { "new_task": new_task.serialize() } )
 
 
-@app.route('/game/<lobby_id>/input/<task_id>')
+@app.route('/game/<lobby_id>/input/<task_id>', methods=['POST'])
 def handle_input(lobby_id, task_id):
     """Check if the input completes one of the currently active tasks"""
 
     gameLobby = gameLobbies[lobby_id]
-    current_task_id = gameLobby.task_generator.current_tasks.get(task_id, "not_current_task")
+    current_task = gameLobby.task_generator.current_tasks.get(int(task_id), "not_current_task")
+
+    # Print some info about the input recieved and the current tasks
+    print("\n\nInput TaskID: " + str(task_id) + "\n\n")
+    print("Current task ids:\n")
+    print(list(gameLobby.task_generator.current_tasks.keys()))
 
     # If it did complete a task, emit a socket.io event to that effect
     # and return a json object with a new task
-    if task_id != "not_current_task":
+    if current_task != "not_current_task":
+
 
         # Update gameLobby and check for win condition
         gameLobby.task_completed()
@@ -279,9 +287,13 @@ def handle_input(lobby_id, task_id):
             # completed and what the next one is. Every player needs to know this
             # info because any one of them could have had the old task, and will
             # need to know what to replace it with
-            new_task = gameLobby.task_generator.new_task(current_task_id)
-            response_json = { "completed_task_id": current_task_id, "new_task": new_task.serialize() }
+            new_task = gameLobby.task_generator.new_task(current_task.task_id)
 
+            print("\n\nNew Task ID: " + str(new_task.task_id))
+            print("\n\nCurrent task ids: ")
+            print(list(gameLobby.task_generator.current_tasks.keys()))
+
+            response_json = { "completed_task_id": current_task.task_id, "new_task": new_task.serialize() }
             socketio.emit(events.TASK_COMPLETE, response_json, namespace="/game:" + lobby_id)
 
 
@@ -302,10 +314,14 @@ def handle_input(lobby_id, task_id):
 
         else:
 
+            print("\n\nBAD INPUT")
+
             # Let every player know that there was bad input, and show some visual indication
             socketio.emit(events.BAD_INPUT, { "task_id": task_id }, namespace="/game:" + lobby_id)
 
     
+    print("\n\nShip health: " + str(gameLobby.ship_health) + "\n\n")
+
     return make_response()
 
 

@@ -64,6 +64,9 @@
             var personalTasks;
             var task;
 
+
+            var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
+            
             var main = function () {};
             main.prototype = {
                 preload: function () {
@@ -146,20 +149,28 @@
                         
                         taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
                         taskText.setInteractive();
-                        taskText.on('pointerdown',() => completeTask(id=id));
+                        taskText.on("pointerdown", completeTask);
+
+                        // To make event handlers work properly
+                        personalTaskText.set(p_task["button_text"], id);
                   }
 
-
-                    function completeTask(id){
+                    function completeTask() {
                         shipSpeed= -4;
-                        console.log(id);
                         arr_sound.play();
+        
+                        var taskID = personalTaskText.get(this.text);
 
-                    };
+                        /// 'game/<lobby_id>/input/<task_id>'
+                        $.ajax({
+                            url: window.location.href + '/input/' + taskID, 
+                            method: 'POST',
+                            success: function() {
 
-
-
-
+                                console.log('Successfully sent input ajax call!');
+                            }
+                        });
+                    }
 
 
                 },
@@ -169,8 +180,6 @@
 
                 }
             };
-
-
 
 
             game.scene.add("main", main);
@@ -183,6 +192,9 @@
             var socket = io.connect('http://' + document.domain + ':' + location.port);
             socket.nsp = "/game:" + "{{ lobby_id }}";
 
+
+
+            // Add in socketio event handlers
             socket.on("game_start", function (data) {
                 data = data || {};
 
@@ -192,6 +204,40 @@
 
                 $('#loadingScreen').hide();
             });
+
+
+            socket.on("bad_input", function(data) {
+
+                console.log('Bad input event recieved');
+
+            });
+
+
+            socket.on("task_failed", function(data) {
+
+                console.log('Task failed event recieved');
+
+            });
+
+            socket.on("task_complete", function(data) {
+
+                console.log('Task complete event recieved');
+
+            });
+
+            socket.on("section_complete", function(data) {
+
+                console.log('Section complete event recieved');
+
+            });
+
+            socket.on("game_over", function(data) {
+
+                console.log('Game over event recieved');
+
+            });
+
+
         </script>
 
         <div id="loadingScreen">

@@ -69,17 +69,19 @@ class TaskGenerator:
         """
         Randomnly pick the next task from usable_tasks, provided it's not currently active
         """
-
+        
         new_task = self.current_tasks[old_task_id]
+
+        usable_task_keys = list(self.usable_tasks.keys())
 
         while new_task.task_id in self.current_tasks:
 
             next_index = random.randrange(0, len(self.usable_tasks))
-            new_task = usable_tasks[next_index]
+            new_task = self.usable_tasks[usable_task_keys[next_index]]
 
         # Remove the old task and keep track of new one
-        current_tasks.remove(old_task_id)
-        current_tasks[new_task.task_id] = new_task
+        self.current_tasks.pop(old_task_id)
+        self.current_tasks[new_task.task_id] = new_task
 
         return new_task
 
