@@ -225,10 +225,9 @@ def task_failed(lobby_id, task_id):
 
     if gameLobby.has_lost:
 
-        # TODO: reset ship health
-
         # Reset for next game and let every client in lobby know that game is over
         gameLobby.has_lost = False
+        gameLobby.ship_health = 100
         gameLobby.task_generator.new_section()
 
         socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
@@ -241,8 +240,6 @@ def task_failed(lobby_id, task_id):
 
     else:
 
-        # TODO: include ship health
-
         # Let everyone know that a task was failed.
         # We don't need to include a task_id, because tasks should be unique
         # and the client that sends and ajax call to this route would be the 
@@ -254,7 +251,7 @@ def task_failed(lobby_id, task_id):
         # and therefore should get this response)
         new_task = gameLobby.task_generator.new_task(task_id)
 
-        return make_response( { "new_task": new_task.serialize() } )
+        return make_response( { "new_task": new_task.serialize(), "ship_health": gameLobby.ship_health } )
 
 
 @app.route('/game/<lobby_id>/input/<task_id>', methods=['POST'])
@@ -279,10 +276,9 @@ def handle_input(lobby_id, task_id):
 
         if gameLobby.section_complete:
 
-            # TODO: reset ship health
-
             # Reset for next section and let every player know they were successful
             gameLobby.section_complete = False
+            gameLobby.ship_health = 100
             gameLobby.task_generator.new_section()
 
             socketio.emit(events.SECTION_COMPLETE, namespace="/game:" + lobby_id)
@@ -312,10 +308,9 @@ def handle_input(lobby_id, task_id):
 
         if gameLobby.has_lost:
 
-            # TODO: reset ship health
-
             # Reset for next game and let every client in lobby know that game is over
             gameLobby.has_lost = False
+            gameLobby.ship_health = 100
             gameLobby.task_generator.new_section()
 
             socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
@@ -324,10 +319,8 @@ def handle_input(lobby_id, task_id):
 
             print("\n\nBAD INPUT")
 
-            # TODO: pass in ship health
-
             # Let every player know that there was bad input, and show some visual indication
-            socketio.emit(events.BAD_INPUT, { "task_id": task_id }, namespace="/game:" + lobby_id)
+            socketio.emit(events.BAD_INPUT, { "task_id": task_id, "ship_health": gameLobby.ship_health }, namespace="/game:" + lobby_id)
 
     
     print("\n\nShip health: " + str(gameLobby.ship_health) + "\n\n")

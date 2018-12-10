@@ -210,19 +210,25 @@
                 // (It didn't match any of the current tasks)
                 var badInputTaskID = data["task_id"];
 
+                var shipHealth = data["ship_health"];
+
                 // TODO: make the ship flash red to show that it took some damage (or just make some text appear briefly)
                 console.log('Bad input event recieved');
+                console.log('Ship health: ' + shipHealth);
 
             });
 
 
             socket.on("task_failed", function(data) {
 
-                // No data included with this one yet. The client who sent the ajax call to trigger this event
+                // No task included with this event. The client who sent the ajax call to trigger this event
                 // will be the only one who needs a new task, and they can get that in the ajax response
+
+                var shipHealth = data["ship_health"];
 
                 // TODO: Make ship flash red or show damage
                 console.log('Task failed event recieved');
+                console.log('Ship health: ' + shipHealth);
 
             });
 
