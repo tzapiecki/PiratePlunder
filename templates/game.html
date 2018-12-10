@@ -97,15 +97,19 @@
                 create: function () {
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
 
-                    text = this.add.text(32, 32,style);
-                    this.add.sprite(350,110,'ship').setScale(0.38);
+                    text = this.add.text(32, 32, style);
+
+                    var ship = this.add.sprite(450, 324, 'ship');
+                    ship.setScale(0.4);
+
+                    this.add.sprite(250,224,'btn').setScale(0.8);
+                    this.add.sprite(650,224,'btn').setScale(0.8);
+                    this.add.sprite(150,424,'btn').setScale(0.8);
+                    this.add.sprite(750,424,'btn').setScale(0.8);
+                    
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     bg_sound.play();
-                    this.add.sprite(130,200,'btn').setScale(0.8);
-                    this.add.sprite(600,200,'btn').setScale(0.8);
-                    this.add.sprite(130,300,'btn').setScale(0.8);
-                    this.add.sprite(600,300,'btn').setScale(0.8);
 
 
                     // sailButton = this.add.sprite(130, 300,'sail_btn').setScale(0.3);
