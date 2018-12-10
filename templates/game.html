@@ -50,8 +50,8 @@
             // Initialize the Phaser Game object and set default game window size
             var game = new Phaser.Game({
                 type: Phaser.AUTO,
-                width: 1400,
-                height: 899
+                width: 900,
+                height: 648
             });
 
             var background;
@@ -61,7 +61,7 @@
                 tackButton;
             var text;
 
-            var personalTasks;
+            var personalTasks = [];
             var task;
 
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
@@ -83,7 +83,8 @@
 
                 },
                 create: function () {
-                    background = this.add.tileSprite(0, 0,1440,648, 'background')
+                    background = this.add.tileSprite(450, 324, 900, 648, 'background');
+
                     text = this.add.text(32, 32,style);
                     this.add.sprite(350,110,'ship').setScale(0.38);
                     bg_sound=this.sound.add('bgsound');
@@ -197,7 +198,7 @@
 
 
             // Add in socketio event handlers
-            socket.on("game_start", function (data) {
+            socket.on("connect", function (data) {
                 data = data || {};
 
                 initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
