@@ -261,7 +261,7 @@ def handle_input(lobby_id, task_id):
     current_task = gameLobby.task_generator.current_tasks.get(int(task_id), "not_current_task")
 
     # Print some info about the input recieved and the current tasks
-    print("\n\nInput TaskID: " + str(task_id) + "\n\n")
+    print("\n\nInput TaskID: " + str(task_id) + "\n")
     print("Current task ids:\n")
     print(list(gameLobby.task_generator.current_tasks.keys()))
 
@@ -289,8 +289,8 @@ def handle_input(lobby_id, task_id):
             # need to know what to replace it with
             new_task = gameLobby.task_generator.new_task(current_task.task_id)
 
-            print("\n\nNew Task ID: " + str(new_task.task_id))
-            print("\n\nCurrent task ids: ")
+            print("\n\nNew Task ID: " + str(new_task.task_id) + "\n")
+            print("Current task ids: ")
             print(list(gameLobby.task_generator.current_tasks.keys()))
 
             response_json = { "completed_task_id": current_task.task_id, "new_task": new_task.serialize() }
