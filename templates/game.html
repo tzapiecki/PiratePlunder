@@ -74,10 +74,12 @@
 
             var personalTasks = [];
             var task;
+            var currentID;
 
 
+            var currentTaskText = new Map(); //key : text of current task, value: task_id
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
-            
+
             var main = function () {};
             main.prototype = {
                 preload: function () {
@@ -85,9 +87,15 @@
                     this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
                     this.load.image('background', "bg.png");
                     this.load.image('ship',"ship.png");
+                    this.load.image('ship70',"ship70.png");
+                    this.load.image('ship40',"ship40.png");
+                    this.load.image('ship10',"ship10.png");
+                    this.load.image('ship0',"ship0.png");
                     this.load.image('btn','btn.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
+                    this.load.audio('failuresound','failure.wav');
+
                 },
                 create: function () {
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
@@ -97,28 +105,43 @@
                     var ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
 
+                    var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+
+
                     this.add.sprite(250,224,'btn').setScale(0.8);
                     this.add.sprite(650,224,'btn').setScale(0.8);
                     this.add.sprite(150,424,'btn').setScale(0.8);
                     this.add.sprite(750,424,'btn').setScale(0.8);
-                    
+
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
+                    fail_sound=this.sound.add('failuresound');
                     bg_sound.play();
 
 
-                    // sailButton = this.add.sprite(130, 300,'sail_btn').setScale(0.3);
-                    // sailButton.setInteractive();
-                    // sailButton.on('pointerdown', completeTask);
-                    timedEvent = this.time.addEvent({ delay: 2000, callback: fadeTask, callbackScope: this });
-                    var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-                    task=this.add.text(210,200,initialTask['description'],style);
-                    // tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
-                    // tackButton.setInteractive();
-                    // tackButton.on('pointerdown', completeTask);
-                    function fadeTask(){
+
+                    currentID=currentTask['task_id'];
+                    task=this.add.text(210,200,currentTask['description'],style);
+                    currentTaskText.set(currentTask["button_text"], id);
+
+                    timedEvent = this.time.addEvent({ delay: 2000, callback: failTask, callbackScope: this });
+
+
+
+                    function failTask(){
+                      fail_sound.play();
+                      var taskID = currentTaskText.get(this.text);
                       text.destroy();
                       task.destroy();
+                      $.ajax({
+                          url: window.location.href + '/failed/' + taskID,
+                          method: 'POST',
+                          success: function() {
+
+                              console.log('Successfully sent failure ajax call!');
+                          }
+                      });
+
                     };
                     var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
                     for (var i = 0; i < personalTasks.length; i++) {
@@ -153,7 +176,7 @@
                             xPos = p_task["button_position"][0];
                             yPos = p_task["button_position"][1];
                         }
-                        
+
                         taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
                         taskText.setInteractive();
                         taskText.on("pointerdown", completeTask);
@@ -165,12 +188,12 @@
                     function completeTask() {
                         shipSpeed= -4;
                         arr_sound.play();
-        
+
                         var taskID = personalTaskText.get(this.text);
 
                         /// 'game/<lobby_id>/input/<task_id>'
                         $.ajax({
-                            url: window.location.href + '/input/' + taskID, 
+                            url: window.location.href + '/input/' + taskID,
                             method: 'POST',
                             success: function() {
 
@@ -189,12 +212,14 @@
             game.scene.add("main", main);
             var lobbyID = "{{lobby_id}}",
                 userID = "{{user_id}}";
-            var initialTask = {};
+
+            var currentTask = [];
             var socket = io.connect(document.domain + ':' + location.port);
+            
             socket.nsp = "/game:" + "{{ lobby_id }}";
             var gameStart = function (data) {
                 data = data || {};
-                initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
+                currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
                 game.scene.start("main");
                 $('#loadingScreen').hide();
@@ -206,42 +231,21 @@
 
             socket.on("bad_input", function(data) {
 
-                // The task ID of the button that the user clicked
-                // (It didn't match any of the current tasks)
-                var badInputTaskID = data["task_id"];
-
-                var shipHealth = data["ship_health"];
-
-                // TODO: make the ship flash red to show that it took some damage (or just make some text appear briefly)
                 console.log('Bad input event recieved');
-                console.log('Ship health: ' + shipHealth);
 
             });
 
 
             socket.on("task_failed", function(data) {
 
-                // No task included with this event. The client who sent the ajax call to trigger this event
-                // will be the only one who needs a new task, and they can get that in the ajax response
-
-                var shipHealth = data["ship_health"];
-
-                // TODO: Make ship flash red or show damage
                 console.log('Task failed event recieved');
-                console.log('Ship health: ' + shipHealth);
 
             });
 
             socket.on("task_complete", function(data) {
 
-                // The task that was just completed
-                var completedTaskID = data["completed_task_id"]
-
-                // The task that should replace the one that was completed
-                var newTask = data["new_task"]
-
-
                 console.log('Task complete event recieved');
+
             });
 
             socket.on("section_complete", function(data) {
