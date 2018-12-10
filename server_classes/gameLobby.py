@@ -112,6 +112,18 @@ class GameLobby:
         self.section_complete = self.num_tasks_completed >= self.num_tasks_to_complete
 
 
+    def reset(self):
+        """
+        Reset win conditions and ship health, and ask the task generator
+        for a new set of usable tasks.
+        """
+
+        self.ship_health = 100
+        self.has_won = False
+        self.has_lost = False
+        self.task_generator.new_section()
+
+
         
 
 

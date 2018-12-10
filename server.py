@@ -226,9 +226,7 @@ def task_failed(lobby_id, task_id):
     if gameLobby.has_lost:
 
         # Reset for next game and let every client in lobby know that game is over
-        gameLobby.has_lost = False
-        gameLobby.ship_health = 100
-        gameLobby.task_generator.new_section()
+        gameLobby.reset()
 
         socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
@@ -277,9 +275,7 @@ def handle_input(lobby_id, task_id):
         if gameLobby.section_complete:
 
             # Reset for next section and let every player know they were successful
-            gameLobby.section_complete = False
-            gameLobby.ship_health = 100
-            gameLobby.task_generator.new_section()
+            gameLobby.reset()
 
             socketio.emit(events.SECTION_COMPLETE, namespace="/game:" + lobby_id)
 
@@ -309,9 +305,7 @@ def handle_input(lobby_id, task_id):
         if gameLobby.has_lost:
 
             # Reset for next game and let every client in lobby know that game is over
-            gameLobby.has_lost = False
-            gameLobby.ship_health = 100
-            gameLobby.task_generator.new_section()
+            gameLobby.reset()
 
             socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
