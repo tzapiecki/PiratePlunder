@@ -74,8 +74,10 @@
 
             var personalTasks = [];
             var task;
+            var currentID;
 
 
+            var currentTaskText = new Map(); //key : text of current task, value: task_id
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
             var main = function () {};
@@ -92,6 +94,8 @@
                     this.load.image('btn','btn.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
+                    this.load.audio('failuresound','failure.wav');
+
                 },
                 create: function () {
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
@@ -111,35 +115,32 @@
 
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
+                    fail_sound=this.sound.add('failuresound');
                     bg_sound.play();
 
-                    for (var i = 0; i < initialTask.length; i++) {
-                      console.log(2);
-                    };
-
-                  
 
 
-                    task=this.add.text(210,200,initialTask['description'],style);
+                    currentID=currentTask['task_id'];
+                    task=this.add.text(210,200,currentTask['description'],style);
+                    currentTaskText.set(currentTask["button_text"], id);
 
-                    timedEvent = this.time.addEvent({ delay: 2000, callback: fadeTask, callbackScope: this });
+                    timedEvent = this.time.addEvent({ delay: 2000, callback: failTask, callbackScope: this });
 
 
 
-                    function fadeTask(){
+                    function failTask(){
+                      fail_sound.play();
+                      var taskID = currentTaskText.get(this.text);
                       text.destroy();
                       task.destroy();
-                      task=this.add.text(210,200,initialTask['description'],style);
+                      $.ajax({
+                          url: window.location.href + '/failed/' + taskID,
+                          method: 'POST',
+                          success: function() {
 
-
-                      // $.ajax({
-                      //     url: window.location.href + '/failed/' + taskID,
-                      //     method: 'POST',
-                      //     success: function() {
-                      //
-                      //         console.log('Successfully sent failure ajax call!');
-                      //     }
-                      // });
+                              console.log('Successfully sent failure ajax call!');
+                          }
+                      });
 
                     };
                     var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
@@ -211,12 +212,12 @@
             game.scene.add("main", main);
             var lobbyID = "{{lobby_id}}",
                 userID = "{{user_id}}";
-            var initialTask = [];
+            var currentTask = [];
             var socket = io.connect('http://' + document.domain + ':' + location.port);
             socket.nsp = "/game:" + "{{ lobby_id }}";
             var gameStart = function (data) {
                 data = data || {};
-                initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
+                currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
                 game.scene.start("main");
                 $('#loadingScreen').hide();
@@ -228,42 +229,21 @@
 
             socket.on("bad_input", function(data) {
 
-                // The task ID of the button that the user clicked
-                // (It didn't match any of the current tasks)
-                var badInputTaskID = data["task_id"];
-
-                var shipHealth = data["ship_health"];
-
-                // TODO: make the ship flash red to show that it took some damage (or just make some text appear briefly)
                 console.log('Bad input event recieved');
-                console.log('Ship health: ' + shipHealth);
 
             });
 
 
             socket.on("task_failed", function(data) {
 
-                // No task included with this event. The client who sent the ajax call to trigger this event
-                // will be the only one who needs a new task, and they can get that in the ajax response
-
-                var shipHealth = data["ship_health"];
-
-                // TODO: Make ship flash red or show damage
                 console.log('Task failed event recieved');
-                console.log('Ship health: ' + shipHealth);
 
             });
 
             socket.on("task_complete", function(data) {
 
-                // The task that was just completed
-                var completedTaskID = data["completed_task_id"]
-
-                // The task that should replace the one that was completed
-                var newTask = data["new_task"]
-
-
                 console.log('Task complete event recieved');
+
             });
 
             socket.on("section_complete", function(data) {
