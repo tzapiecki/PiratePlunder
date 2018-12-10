@@ -195,7 +195,7 @@
 
 
             // Add in socketio event handlers
-            socket.on("connect", function (data) {
+            socket.on("game_start", function (data) {
                 data = data || {};
 
                 initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
