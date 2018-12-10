@@ -228,21 +228,42 @@
 
             socket.on("bad_input", function(data) {
 
+                // The task ID of the button that the user clicked
+                // (It didn't match any of the current tasks)
+                var badInputTaskID = data["task_id"];
+
+                var shipHealth = data["ship_health"];
+
+                // TODO: make the ship flash red to show that it took some damage (or just make some text appear briefly)
                 console.log('Bad input event recieved');
+                console.log('Ship health: ' + shipHealth);
 
             });
 
 
             socket.on("task_failed", function(data) {
 
+                // No task included with this event. The client who sent the ajax call to trigger this event
+                // will be the only one who needs a new task, and they can get that in the ajax response
+
+                var shipHealth = data["ship_health"];
+
+                // TODO: Make ship flash red or show damage
                 console.log('Task failed event recieved');
+                console.log('Ship health: ' + shipHealth);
 
             });
 
             socket.on("task_complete", function(data) {
 
-                console.log('Task complete event recieved');
+                // The task that was just completed
+                var completedTaskID = data["completed_task_id"]
 
+                // The task that should replace the one that was completed
+                var newTask = data["new_task"]
+
+
+                console.log('Task complete event recieved');
             });
 
             socket.on("section_complete", function(data) {
