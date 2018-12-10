@@ -215,8 +215,8 @@
 
             var currentTask = [];
             var socket = io.connect(document.domain + ':' + location.port);
-            
             socket.nsp = "/game:" + "{{ lobby_id }}";
+            
             var gameStart = function (data) {
                 data = data || {};
                 currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
