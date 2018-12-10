@@ -19,7 +19,7 @@ app = Flask(__name__, static_url_path='')
 
 # The ping interval is how often it checks in with clients (1 second)
 # The ping timeout is when the server considers a client disconnected (after 3 seconds)
-socketio = SocketIO(app, ping_interval=1, ping_timeout=3) 
+socketio = SocketIO(app, ping_interval=2, ping_timeout=6, transports=['websocket']) 
 
 """
 Global variables

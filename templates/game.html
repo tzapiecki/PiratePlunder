@@ -190,7 +190,7 @@
             var lobbyID = "{{lobby_id}}",
                 userID = "{{user_id}}";
             var initialTask = {};
-            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            var socket = io.connect(document.domain + ':' + location.port);
             socket.nsp = "/game:" + "{{ lobby_id }}";
             var gameStart = function (data) {
                 data = data || {};
