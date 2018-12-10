@@ -40,6 +40,19 @@
                 background-color: transparent;
                 text-align: center;
             }
+            button {
+                font-size: 3rem;
+                width: 10rem;
+                position: absolute;
+                bottom: 1rem;
+                right: 1rem;
+                background-color: white;
+                color: black;
+                z-index: 50;
+            }
+            button:hover {
+                cursor: pointer;
+            }
         </style>
 
         <script type="text/javascript" src="{{ url_for('static', filename='packages/jquery.min.js') }}"></script>
@@ -50,22 +63,17 @@
             // Initialize the Phaser Game object and set default game window size
             var game = new Phaser.Game({
                 type: Phaser.AUTO,
-                width: 760,
-                height: 360
+                width: 900,
+                height: 648
             });
-
             var background;
             var shipSpeed = -2;
-
             var sailButton,
                 tackButton;
             var text;
-
-            var personalTasks;
+            var personalTasks = [];
             var task;
-
-
-
+            var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
             var main = function () {};
             main.prototype = {
@@ -77,25 +85,20 @@
                     this.load.image('btn','btn.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
-
-
-
                 },
                 create: function () {
-                    background = this.add.tileSprite(0, 0,1440,648, 'background')
-                    text = this.add.text(32, 32,style);
-                    this.add.sprite(350,110,'ship').setScale(0.38);
+                    background = this.add.tileSprite(450, 324, 900, 648, 'background');
+                    text = this.add.text(32, 32, style);
+                    var ship = this.add.sprite(450, 324, 'ship');
+                    ship.setScale(0.4);
+                    this.add.sprite(250,224,'btn').setScale(0.8);
+                    this.add.sprite(650,224,'btn').setScale(0.8);
+                    this.add.sprite(150,424,'btn').setScale(0.8);
+                    this.add.sprite(750,424,'btn').setScale(0.8);
+
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     bg_sound.play();
-                    this.add.sprite(130,200,'btn').setScale(0.3);
-                    this.add.sprite(600,200,'btn').setScale(0.3);
-                    this.add.sprite(130,300,'btn').setScale(0.3);
-                    this.add.sprite(600,300,'btn').setScale(0.3);
-
-
-
-
                     // sailButton = this.add.sprite(130, 300,'sail_btn').setScale(0.3);
                     // sailButton.setInteractive();
                     // sailButton.on('pointerdown', completeTask);
@@ -105,81 +108,97 @@
                     // tackButton = this.add.sprite(445, 200,'tack_btn').setScale(0.3);
                     // tackButton.setInteractive();
                     // tackButton.on('pointerdown', completeTask);
-
                     function fadeTask(){
                       text.destroy();
                       task.destroy();
                     };
-
-
                     var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-
-                    var taskTexts=new Map();
-
                     for (var i = 0; i < personalTasks.length; i++) {
+                        var taskText;
                         var p_task;
                         var id;
+                        var xPos;
+                        var yPos;
                         p_task = personalTasks[i];
-                        id=p_task['task_id']
-                        var xPos = p_task["button_position"][0];
-                        var yPos = p_task["button_position"][1];
-                        taskTexts.set(this.add.text(xPos, yPos, p_task["button_text"]),id);
+                        id = p_task['task_id']
+                        if (i === 0) {
+                            xPos = 130;
+                            yPos = 200;
+                        }
+                        else if (i === 1) {
+                            xPos = 600;
+                            yPos = 200;
+                        }
+                        else if (i === 2) {
+                            xPos = 130;
+                            yPos = 300;
+                        }
+                        else if (i === 3) {
+                            xPos = 600;
+                            yPos = 300;
+                        }
+                        else {
+                            console.log("Too many tasks per player. Setting buttons to passed in positions");
+                            xPos = p_task["button_position"][0];
+                            yPos = p_task["button_position"][1];
+                        }
 
-
-
+                        taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
+                        taskText.setInteractive();
+                        taskText.on("pointerdown", completeTask);
+                        // To make event handlers work properly
+                        personalTaskText.set(p_task["button_text"], id);
                   }
-
-                  console.log(taskTexts);
-
-                  for(val in taskTexts.values()){
-                    var tid;
-                    tid=val;
-                    console.log(tid);
-                    val.setInteractive();
-                    val.on('pointerdown',() => completeTask(id=tid));
-                  }
-
-
-
-
-                    function completeTask(id){
+                    function completeTask() {
                         shipSpeed= -4;
-                        console.log(id);
                         arr_sound.play();
 
-                    };
-
-
-
+                        var taskID = personalTaskText.get(this.text);
+                        /// 'game/<lobby_id>/input/<task_id>'
+                        $.ajax({
+                            url: window.location.href + '/input/' + taskID,
+                            method: 'POST',
+                            success: function() {
+                                console.log('Successfully sent input ajax call!');
+                            }
+                        });
+                    }
                 },
                 update: function () {
                     background.tilePositionX += shipSpeed;
                     text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
-
                 }
             };
-
-
-
-
             game.scene.add("main", main);
-
             var lobbyID = "{{lobby_id}}",
                 userID = "{{user_id}}";
-
             var initialTask = {};
-
             var socket = io.connect('http://' + document.domain + ':' + location.port);
             socket.nsp = "/game:" + "{{ lobby_id }}";
-
-            socket.on("game_start", function (data) {
+            var gameStart = function (data) {
                 data = data || {};
-
                 initialTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
                 game.scene.start("main");
-
                 $('#loadingScreen').hide();
+                $('button').hide();
+            };
+            // Add in socketio event handlers
+            socket.on("game_start", gameStart);
+            socket.on("bad_input", function(data) {
+                console.log('Bad input event recieved');
+            });
+            socket.on("task_failed", function(data) {
+                console.log('Task failed event recieved');
+            });
+            socket.on("task_complete", function(data) {
+                console.log('Task complete event recieved');
+            });
+            socket.on("section_complete", function(data) {
+                console.log('Section complete event recieved');
+            });
+            socket.on("game_over", function(data) {
+                console.log('Game over event recieved');
             });
         </script>
 
@@ -187,5 +206,6 @@
             <div></div>
             <label>WAITING FOR OTHER PLAYERS TO CONNECT</label>
         </div>
+        <button onclick="gameStart({});">GO TO GAME</button>
     </body>
 </html>
