@@ -225,6 +225,8 @@ def task_failed(lobby_id, task_id):
 
     if gameLobby.has_lost:
 
+        # TODO: reset ship health
+
         # Reset for next game and let every client in lobby know that game is over
         gameLobby.has_lost = False
         gameLobby.task_generator.new_section()
@@ -238,6 +240,8 @@ def task_failed(lobby_id, task_id):
         return make_response()
 
     else:
+
+        # TODO: include ship health
 
         # Let everyone know that a task was failed.
         # We don't need to include a task_id, because tasks should be unique
@@ -275,6 +279,8 @@ def handle_input(lobby_id, task_id):
 
         if gameLobby.section_complete:
 
+            # TODO: reset ship health
+
             # Reset for next section and let every player know they were successful
             gameLobby.section_complete = False
             gameLobby.task_generator.new_section()
@@ -306,6 +312,8 @@ def handle_input(lobby_id, task_id):
 
         if gameLobby.has_lost:
 
+            # TODO: reset ship health
+
             # Reset for next game and let every client in lobby know that game is over
             gameLobby.has_lost = False
             gameLobby.task_generator.new_section()
@@ -315,6 +323,8 @@ def handle_input(lobby_id, task_id):
         else:
 
             print("\n\nBAD INPUT")
+
+            # TODO: pass in ship health
 
             # Let every player know that there was bad input, and show some visual indication
             socketio.emit(events.BAD_INPUT, { "task_id": task_id }, namespace="/game:" + lobby_id)
