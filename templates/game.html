@@ -76,8 +76,6 @@
             var task;
             var currentID;
 
-
-            var currentTaskText = new Map(); //key : text of current task, value: task_id
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
             var main = function () {};
@@ -122,23 +120,27 @@
 
                     currentID=currentTask['task_id'];
                     task=this.add.text(210,200,currentTask['description'],style);
-                    currentTaskText.set(currentTask["button_text"], id);
 
                     timedEvent = this.time.addEvent({ delay: 2000, callback: failTask, callbackScope: this });
 
 
 
-                    function failTask(){
+                    function failTask() {
+
                       fail_sound.play();
-                      var taskID = currentTaskText.get(this.text);
+
                       text.destroy();
                       task.destroy();
+
                       $.ajax({
-                          url: window.location.href + '/failed/' + taskID,
+                          url: window.location.href + '/failed/' + currentID,
                           method: 'POST',
-                          success: function() {
+                          success: function(newTask) {
 
                               console.log('Successfully sent failure ajax call!');
+
+                              console.log('New task:');
+                              console.log(newTask);
                           }
                       });
 
@@ -239,6 +241,7 @@
             socket.on("task_failed", function(data) {
 
                 console.log('Task failed event recieved');
+                console.log("Ship health: " + data["ship_health"])
 
             });
 

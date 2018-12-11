@@ -6,7 +6,7 @@ Written by Gabriel Brown and Trevor Zapiecki
 """
 import json
 
-from flask import Flask, render_template, make_response, request, redirect
+from flask import Flask, render_template, make_response, request, redirect, jsonify
 from flask_socketio import SocketIO, emit
 
 from server_classes import events
@@ -243,14 +243,14 @@ def task_failed(lobby_id, task_id):
         # We don't need to include a task_id, because tasks should be unique
         # and the client that sends and ajax call to this route would be the 
         # who failed, and therefore the only one who needs a new task
-        socketio.emit(events.TASK_FAILED, namespace="/game:" + lobby_id)
+        socketio.emit(events.TASK_FAILED, { "ship_health": gameLobby.ship_health }, namespace="/game:" + lobby_id)
 
         # Generate a new task and return that as a json response
         # (the user who failed the task should send the request to this URL,
         # and therefore should get this response)
-        new_task = gameLobby.task_generator.new_task(task_id)
+        new_task = gameLobby.task_generator.new_task(int(task_id))
 
-        return make_response( { "new_task": new_task.serialize(), "ship_health": gameLobby.ship_health } )
+        return jsonify(new_task.serialize())
 
 
 @app.route('/game/<lobby_id>/input/<task_id>', methods=['POST'])
