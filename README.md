@@ -5,7 +5,7 @@ Made by Gabriel Brown, Meghraj Singh, Trevor Zapiecki, and Haimeng Zhang.
 
 ## Playing the game over the internet
 Go to the following link to play a version of Pirate Plunder hosted on Heroku!  
-https://git.heroku.com/pirate-plunder
+https://pirate-plunder.herokuapp.com/
 
 ## How to set up your environment
 1. Clone this repository
