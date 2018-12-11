@@ -1,5 +1,11 @@
 # PiratePlunder
-A collaborative browser game for fun with your friends.
+A collaborative browser game for fun with your friends, heavily inspired by Spaceteam.
+
+Made by Gabriel Brown, Meghraj Singh, Trevor Zapiecki, and Haimeng Zhang.
+
+## Playing the game over the internet
+Go to the following link to play a version of Pirate Plunder hosted on Heroku!  
+https://git.heroku.com/pirate-plunder
 
 ## How to set up your environment
 1. Clone this repository
@@ -25,7 +31,7 @@ NOTE: You might not need to use the `--user` flag when installing SocketIO and E
 
 That's it! Remember to always activate your virtual environment with `. ./venv/bin/activate` in the `PiratePlunder` directory before you start the server.
 
-## Playing the game
+## Playing the game locally
 1. In the `PiratePlunder` directory, with the virtual environment activated, start up the server
 ```
 python server.py
