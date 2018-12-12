@@ -278,7 +278,37 @@ def handle_input(lobby_id, task_id):
             # Reset for next section and let every player know they were successful
             gameLobby.reset()
 
-            socketio.emit(events.SECTION_COMPLETE, namespace="/game:" + lobby_id)
+
+            # Assign usable tasks to users and include that info
+            # plus their first tasks
+
+            # Serialize initial task assignments
+            serializedInitialTasks = {}
+            for key in gameLobby.initial_task_assignments.keys():
+                task = gameLobby.initial_task_assignments[key]
+                serializedInitialTasks[key] = task.serialize()
+
+            # Serialize tasks unique to each user
+            serializedUserTasks = {}
+            for user_id in gameLobby.user_tasks.keys():
+
+                user_task_list = gameLobby.user_tasks[user_id]
+                serialized_list = []
+
+                for task in user_task_list:
+                    serialized_list.append(task.serialize())
+
+                serializedUserTasks[user_id] = serialized_list
+
+
+            socketio.emit(
+                events.SECTION_COMPLETE, 
+                {
+                    "initialTasks": serializedInitialTasks,
+                    "userTasks": serializedUserTasks
+                }, 
+                namespace="/game:" + lobby_id
+                )
 
         else:
 
@@ -321,6 +351,7 @@ def handle_input(lobby_id, task_id):
     print("\n\nShip health: " + str(gameLobby.ship_health) + "\n\n")
 
     return make_response()
+
 
 
 if __name__ == '__main__':
