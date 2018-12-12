@@ -97,10 +97,10 @@
                     var ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
 
-                    this.add.sprite(250,224,'btn').setScale(0.8);
-                    this.add.sprite(650,224,'btn').setScale(0.8);
-                    this.add.sprite(150,424,'btn').setScale(0.8);
-                    this.add.sprite(750,424,'btn').setScale(0.8);
+                    this.add.sprite(250,224,'btn').setScale(1);
+                    this.add.sprite(650,224,'btn').setScale(1);
+                    this.add.sprite(150,424,'btn').setScale(1);
+                    this.add.sprite(750,424,'btn').setScale(1);
                     
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
@@ -206,7 +206,7 @@
 
             socket.on("bad_input", function(data) {
 
-                console.log('Bad input event recieved');
+                console.log('Bad input event received');
 
             });
 
