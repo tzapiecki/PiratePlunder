@@ -66,8 +66,9 @@
                 width: 900,
                 height: 648
             });
+
             var background;
-            var shipSpeed = -2;
+
             var sailButton,
                 tackButton;
 
@@ -77,8 +78,11 @@
 
             var currentTask = {};
 
+            var taskCompletionTime = 10000;
+
             var timeLeft,
                 timeLeftText;
+
             var currentTime;
             var countdownActive = false;
 
@@ -86,6 +90,8 @@
             var btn1text, btn2text, btn3text, btn4text;
 
             var ship;
+            var shipHealth;
+            var shipSpeed = -2;
 
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
@@ -150,9 +156,7 @@
                         boundsAlignV: "middle"
                     };
                     timeLeftText = this.add.text(32, 32);
-                    ship = this.add.sprite(450, 324, 'ship');
 
-                    ship.setScale(0.4);
                     this.add.sprite(450,90,'task-panel').setScale(2);
                     this.add.sprite(850, 50,'qtn-mark').setScale(0.5);
 
@@ -209,9 +213,8 @@
                     bg_sound.play();
 
                     currentID = currentTask['task_id'];
-                    objectiveTask = this.add.text(210, 200, currentTask['description'], taskStyle);
 
-                    timeLeft = 9999;
+                    timeLeft = taskCompletionTime;
                     prevTime = this.time.now;
                     countdownActive = true;
                 },
@@ -225,7 +228,7 @@
                         
                         // If task isn't completed in time
                         if (timeLeft <= 0) {
-                            timeLeft = 9999;
+                            timeLeft = taskCompletionTime;
 
                             objectiveTask.setText("Loading next task....");
                             countdownActive = false;
@@ -237,10 +240,10 @@
                                     data = data || {};
 
                                     countdownActive = true;
-                                    timeLeft = 9999;
+                                    timeLeft = taskCompletionTime;
 
                                     currentTask = data;
-                                    currentTask.setText(currentTask.description);
+                                    objectiveTask.setText(currentTask.description);
                                 }
                             });
                         }
@@ -256,30 +259,56 @@
 
             var gameStart = function (data) {
                 data = data || {};
+
                 currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : currentTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
+                taskCompletionTime = typeof data.task_completion_time !== "undefined" ? data.task_completion_time : 10000;
+                shipHealth = typeof data.shipHealth !== "undefined" ? data.shipHealth : shipHealth;
+
                 game.scene.start("main");
                 $('#loadingScreen').hide();
                 $('button').hide();
-
-                console.log("Task completion time: " + data["taskCompletionTime"]);
             };
 
             // Add in socketio event handlers
             socket.on("game_start", gameStart);
 
             socket.on("bad_input", function(data) {
+                data = data || {};
 
-                console.log('Bad input event received');
-                damageShip(data['ship_health'])
+                fail_sound.play();
+                shipSpeed *= 0.75;
 
-
+                shipHealth = typeof data.ship_health !== "undefined" ? data.ship_health : shipHealth;
+                
+                if (shipHealth <=70 && shipHealth > 40){
+                    ship.setTexture('ship70');
+                }
+                else if (shipHealth <=40 && shipHealth > 10){
+                    ship.setTexture('ship40');
+                }
+                else if(shipHealth <=10 ){
+                    ship.setTexture('ship0');
+                }
             });
 
             socket.on("task_failed", function(data) {
+                data = data || {};
+
                 fail_sound.play();
                 shipSpeed *= 0.75;
-                damageShip(data['ship_health']);
+
+                shipHealth = typeof data.ship_health !== "undefined" ? data.ship_health : shipHealth;
+                
+                if (shipHealth <=70 && shipHealth > 40){
+                    ship.setTexture('ship70');
+                }
+                else if (shipHealth <=40 && shipHealth > 10){
+                    ship.setTexture('ship40');
+                }
+                else if(shipHealth <=10 ){
+                    ship.setTexture('ship0');
+                }
             });
 
             socket.on("task_complete", function(data) {
@@ -287,8 +316,8 @@
 
                 data = data || {};
 
-                if (data.completed.current_task_id === currentTask.task_id) {
-                    timeLeft = 9999;
+                if (data.completed_task_id === currentTask.task_id) {
+                    timeLeft = taskCompletionTime;
                     countdownActive = true;
 
                     currentTask = data.new_task;
@@ -302,7 +331,7 @@
             socket.on("section_complete", function(data) {
                 console.log('SECTION COMPLETED');
 
-                timeLeft = 9999;
+                timeLeft = taskCompletionTime;
 
                 currentTask = data.initialTasks[userID];
                 personalTasks = data.userTasks[userID];
@@ -317,25 +346,6 @@
                 console.log('Game over event recieved');
 
             });
-
-
-            function damageShip(shipHealth){
-              if (shipHealth <=70 && shipHealth > 40){
-                ship.setTexture('ship70');
-              }
-              else if (shipHealth <=40 && shipHealth > 10){
-                ship.setTexture('ship40');
-              }
-
-              else if(shipHealth <=10 ){
-                ship.setTexture('ship0');
-              }
-
-            };
-
-
-
-
         </script>
 
         <div id="loadingScreen">

@@ -71,7 +71,7 @@ class TaskGenerator:
 
         new_task = self.current_tasks.get(old_task_id, None)
         if new_task is None:
-            return None
+            return Task(0, "NO MORE TASKS", "NO MORE TASKS", (0, 0))
 
         usable_task_keys = list(self.usable_tasks.keys())
 

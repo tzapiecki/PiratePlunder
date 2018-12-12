@@ -192,7 +192,8 @@ def game(lobby_id):
                 {
                     "initialTasks": serializedInitialTasks,
                     "userTasks": serializedUserTasks,
-                    "taskCompletionTime": gameLobby.task_completion_time
+                    "taskCompletionTime": gameLobby.task_completion_time,
+                    "shipHealth": gameLobby.ship_health
                 },
                 namespace="/game:" + lobby_id
             )
