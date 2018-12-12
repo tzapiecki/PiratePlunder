@@ -120,7 +120,7 @@
                     currentID=currentTask['task_id'];
                     task=this.add.text(210,200,currentTask['description'],style);
 
-                    timedEvent = this.time.addEvent({ delay: 2000, callback: failTask, callbackScope: this });
+                    timedEvent = this.time.addEvent({ delay: 10000, callback: failTask, callbackScope: this });
 
 
 
@@ -253,6 +253,8 @@
             socket.on("section_complete", function(data) {
 
                 console.log('Section complete event recieved');
+                console.log(data["initialTasks"]);
+                console.log(data["userTasks"]);
 
             });
 
