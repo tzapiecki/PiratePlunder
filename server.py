@@ -279,6 +279,7 @@ def handle_input(lobby_id, task_id):
             # Reset for next section and let every player know they were successful
             gameLobby.reset()
 
+            print("Num tasks to complete: " + str(gameLobby.num_tasks_to_complete))
 
             # Assign usable tasks to users and include that info
             # plus their first tasks

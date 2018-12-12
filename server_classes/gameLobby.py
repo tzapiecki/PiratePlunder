@@ -9,6 +9,10 @@ from . import events
 from .task_generator import TaskGenerator
 
 class GameLobby:
+
+    INITIAL_NUM_TASKS_TO_COMPLETE = 1       
+    INITIAL_TASK_COMPLETION_TIME = 10000    # In milliseconds
+
     def __init__(self, lobby_id, numPlayers):
         """Constructor for Lobby"""
 
@@ -30,15 +34,17 @@ class GameLobby:
         self.task_fail_damage = 10          # The amount of damage failing a task deals to the ship
         self.bad_input_damage = 5           # The amount of damage pressing a the wrong button deals to the ship
 
-        self.num_tasks_to_complete = 5      # The number of tasks players must complete before moving on to a new sector
-        self.num_tasks_completed = 0        # The number of tasks players have actually completed
+        # The number of tasks players must complete before moving on to a new sector
+        self.num_tasks_to_complete = self.INITIAL_NUM_TASKS_TO_COMPLETE
+
+        # The number of tasks players have actually completed
+        self.num_tasks_completed = 0        
 
         self.has_won = False
         self.section_complete = False
 
         self.section_number = 0
-        self.task_completion_time = 10000   # The time alotted to complete each assigned task in milliseconds. 
-                                            # Should be adjusted based on section number and num players.
+        self.task_completion_time = self.INITIAL_TASK_COMPLETION_TIME  # The time alotted to complete each assigned task in milliseconds. 
 
 
     def add_player(self, player):
@@ -49,7 +55,7 @@ class GameLobby:
         """This should be called whenever all the players connect to a game for the first time"""
 
         self.task_generator = TaskGenerator(len(self.players))
-        self.update_task_completion_time()
+        self.adjust_challenge()
         self.assign_tasks()
 
 
@@ -123,14 +129,19 @@ class GameLobby:
             self.section_number += 1
 
 
-    def update_task_completion_time(self):
+    def adjust_challenge(self):
         """
-        Update the task completion time based on the section number
-        and number of players. Generally, more players should mean more time
-        allocated and a higher section number should mean less time
+        Update the task completion time and and the number of 
+        tasks to complete based on the section number 
+        and number of players
         """
 
-        self.task_completion_time = 10000 + (self.numPlayers - 2)*2000 - self.section_number*1000
+        # Base time should be 10 seconds plus 2 seconds per player, then subtract
+        # 1 second each time we go up a section
+        self.task_completion_time = self.INITIAL_TASK_COMPLETION_TIME + (self.numPlayers - 2)*2000 - self.section_number*1000 
+
+        # Add an additional task per player when the section increases
+        self.num_tasks_to_complete = self.INITIAL_NUM_TASKS_TO_COMPLETE + (self.section_number * self.numPlayers)       
 
 
     def reset(self):
@@ -143,7 +154,7 @@ class GameLobby:
         self.has_won = False
         self.has_lost = False
         self.task_generator.new_section()
-        self.update_task_completion_time()
+        self.adjust_challenge()
         self.assign_tasks()
 
 
