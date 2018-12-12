@@ -93,7 +93,6 @@
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.wav');
-
                 },
                 create: function () {
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
@@ -102,14 +101,12 @@
 
                     var ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
+                    this.add.sprite(250,224,'btn').setScale(1);
+                    this.add.sprite(650,224,'btn').setScale(1);
+                    this.add.sprite(150,424,'btn').setScale(1);
+                    this.add.sprite(750,424,'btn').setScale(1);
 
                     var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
-
-
-                    this.add.sprite(250,224,'btn').setScale(0.8);
-                    this.add.sprite(650,224,'btn').setScale(0.8);
-                    this.add.sprite(150,424,'btn').setScale(0.8);
-                    this.add.sprite(750,424,'btn').setScale(0.8);
 
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
@@ -221,7 +218,7 @@
 
             var gameStart = function (data) {
                 data = data || {};
-                currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
+                currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : currentTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
                 game.scene.start("main");
                 $('#loadingScreen').hide();
@@ -235,7 +232,7 @@
 
             socket.on("bad_input", function(data) {
 
-                console.log('Bad input event recieved');
+                console.log('Bad input event received');
 
             });
 
