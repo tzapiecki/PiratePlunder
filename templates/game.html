@@ -89,7 +89,8 @@
                     this.load.image('ship40',"ship40.png");
                     this.load.image('ship10',"ship10.png");
                     this.load.image('ship0',"ship0.png");
-                    this.load.image('btn','btn.png');
+                    this.load.image('btn','btn6.png');
+                    this.load.image('task-panel','task-panel-btn.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.wav');
@@ -101,25 +102,23 @@
 
                     var ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
-                    this.add.sprite(250,224,'btn').setScale(1);
-                    this.add.sprite(650,224,'btn').setScale(1);
-                    this.add.sprite(150,424,'btn').setScale(1);
-                    this.add.sprite(750,424,'btn').setScale(1);
+                    this.add.sprite(225,486,'btn').setScale(0.5);
+                    this.add.sprite(675,486,'btn').setScale(.5);
+                    this.add.sprite(225,596,'btn').setScale(.5);
+                    this.add.sprite(675,596,'btn').setScale(.5);
+                    this.add.sprite(450,90,'task-panel').setScale(2);
 
-                    var style = { font: "bold 32px Sedwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+                    var style = { font: "bold 28px Sedgwick Ave", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
 
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     fail_sound=this.sound.add('failuresound');
                     bg_sound.play();
 
-
-
                     currentID=currentTask['task_id'];
-                    task=this.add.text(210,200,currentTask['description'],style);
+                    task=this.add.text(82.5,77,currentTask['description'],style);
 
                     timedEvent = this.time.addEvent({ delay: 10000, callback: failTask, callbackScope: this });
-
 
 
                     function failTask() {
@@ -142,7 +141,7 @@
                       });
 
                     };
-                    var style = { font: "bold 16px Sedgwick Ave", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+                    var buttonTextStyle = { font: "bold 28px Sedgwick Ave", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
                     for (var i = 0; i < personalTasks.length; i++) {
 
                         var taskText;
@@ -155,20 +154,20 @@
                         id = p_task['task_id']
 
                         if (i === 0) {
-                            xPos = 130;
-                            yPos = 200;
+                            xPos = 112.5;
+                            yPos = 470;
                         }
                         else if (i === 1) {
-                            xPos = 600;
-                            yPos = 200;
+                            xPos = 522.5;
+                            yPos = 470;
                         }
                         else if (i === 2) {
-                            xPos = 130;
-                            yPos = 300;
+                            xPos = 112.5;
+                            yPos = 580;
                         }
                         else if (i === 3) {
-                            xPos = 600;
-                            yPos = 300;
+                            xPos =  522.5;
+                            yPos = 580;
                         }
                         else {
                             console.log("Too many tasks per player. Setting buttons to passed in positions");
@@ -176,7 +175,7 @@
                             yPos = p_task["button_position"][1];
                         }
 
-                        taskText=this.add.text(xPos, yPos, p_task["button_text"], style);
+                        taskText=this.add.text(xPos, yPos, p_task["button_text"], buttonTextStyle);
                         taskText.setInteractive();
                         taskText.on("pointerdown", completeTask);
 
