@@ -130,42 +130,58 @@
                     this.load.image('ship40',"ship40.png");
                     this.load.image('ship10',"ship10.png");
                     this.load.image('ship0',"ship0.png");
-                    this.load.image('btn','btn.png');
+                    this.load.image('btn','btn6.png');
+                    this.load.image('qtn-mark','qtn-mark.png');
+                    this.load.image('task-panel','task-panel-btn.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.wav');
                 },
                 create: function () {
+                    bg_sound=this.sound.add('bgsound');
+                    arr_sound=this.sound.add('arrsound');
+                    fail_sound=this.sound.add('failuresound');
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
 
                     let taskStyle = {
                         font: "bold 32px Sedwick Ave",
-                        fill: "#fff",
+                        fill: "#ffffff",
                         boundsAlignH: "center",
                         boundsAlignV: "middle"
                     };
+                    timeLeftText = this.add.text(32, 32);
+                    ship = this.add.sprite(450, 324, 'ship');
+
+                    ship.setScale(0.4);
+                    this.add.sprite(450,90,'task-panel').setScale(2);
+                    this.add.sprite(850, 50,'qtn-mark').setScale(0.5);
+
+                    bg_sound.play();
+
+                    currentID = currentTask['task_id'];
+                    objectiveTask = this.add.text(82.5,77,currentTask['description'], taskStyle);
 
                     timeLeftText = this.add.text(32, 32);
 
                     ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
 
-                    let buttonStyle = {
-                        font: "bold 16px Sedgwick Ave",
-                        fill: "#fff",
+                    let buttonTextStyle = {
+                        font: "bold 28px Sedgwick Ave",
+                        fill: "#ffffff",
                         boundsAlignH: "center",
                         boundsAlignV: "middle"
                     };
 
-                    button1 = this.add.sprite(250,224,'btn').setScale(0.8);
-                    button2 = this.add.sprite(650,224,'btn').setScale(0.8);
-                    button3 = this.add.sprite(150,424,'btn').setScale(0.8);
-                    button4 = this.add.sprite(750,424,'btn').setScale(0.8);
+                    button1 = this.add.sprite(225, 485, 'btn').setScale(0.5);
+                    button2 = this.add.sprite(675, 486, 'btn').setScale(0.5);
+                    button3 = this.add.sprite(225, 596, 'btn').setScale(0.5);
+                    button4 = this.add.sprite(675, 596, 'btn').setScale(0.5);
 
-                    btn1text = this.add.text(130, 200, "", buttonStyle);
-                    btn2text = this.add.text(600, 200, "", buttonStyle);
-                    btn3text = this.add.text(130, 300, "", buttonStyle);
-                    btn4text = this.add.text(600, 300, "", buttonStyle);
+                    btn1text = this.add.text(112.5, 470, "", buttonTextStyle);
+                    btn2text = this.add.text(522.5, 470, "", buttonTextStyle);
+                    btn3text = this.add.text(112.5, 580, "", buttonTextStyle);
+                    btn4text = this.add.text(522.5, 580, "", buttonTextStyle);
 
                     let buttonList = [button1, button2, button3, button4];
                     let buttonTextList = [btn1text, btn2text, btn3text, btn4text];
@@ -224,7 +240,7 @@
                                     timeLeft = 9999;
 
                                     currentTask = data;
-                                    task.setText(currentTask.description);
+                                    currentTask.setText(currentTask.description);
                                 }
                             });
                         }
@@ -245,6 +261,8 @@
                 game.scene.start("main");
                 $('#loadingScreen').hide();
                 $('button').hide();
+
+                console.log("Task completion time: " + data["taskCompletionTime"]);
             };
 
             // Add in socketio event handlers
@@ -252,13 +270,16 @@
 
             socket.on("bad_input", function(data) {
 
-                console.log('Bad input event recieved');
+                console.log('Bad input event received');
+                damageShip(data['ship_health'])
+
 
             });
 
             socket.on("task_failed", function(data) {
                 fail_sound.play();
                 shipSpeed *= 0.75;
+                damageShip(data['ship_health']);
             });
 
             socket.on("task_complete", function(data) {
@@ -296,6 +317,25 @@
                 console.log('Game over event recieved');
 
             });
+
+
+            function damageShip(shipHealth){
+              if (shipHealth <=70 && shipHealth > 40){
+                ship.setTexture('ship70');
+              }
+              else if (shipHealth <=40 && shipHealth > 10){
+                ship.setTexture('ship40');
+              }
+
+              else if(shipHealth <=10 ){
+                ship.setTexture('ship0');
+              }
+
+            };
+
+
+
+
         </script>
 
         <div id="loadingScreen">
