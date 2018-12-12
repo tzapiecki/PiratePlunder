@@ -93,7 +93,6 @@
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.wav');
-
                 },
                 create: function () {
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
@@ -221,7 +220,7 @@
 
             var gameStart = function (data) {
                 data = data || {};
-                currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : initialTask;
+                currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : currentTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
                 game.scene.start("main");
                 $('#loadingScreen').hide();
