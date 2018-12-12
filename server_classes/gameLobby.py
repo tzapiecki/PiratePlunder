@@ -10,8 +10,8 @@ from .task_generator import TaskGenerator
 
 class GameLobby:
 
-    INITIAL_NUM_TASKS_TO_COMPLETE = 1       
-    INITIAL_TASK_COMPLETION_TIME = 10000    # In milliseconds
+    INITIAL_NUM_TASKS_TO_COMPLETE = 5       
+    INITIAL_TASK_COMPLETION_TIME = 100000    # In milliseconds
 
     def __init__(self, lobby_id, numPlayers):
         """Constructor for Lobby"""

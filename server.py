@@ -224,7 +224,12 @@ def task_failed(lobby_id, task_id):
     gameLobby = gameLobbies[lobby_id]
     gameLobby.task_failed()
 
-    print("\n\nShip health: " + str(gameLobby.ship_health) + "\n\n")
+    print("\n\n===========\nTASK FAILED\n===========")
+    print("Ship health: " + str(gameLobby.ship_health))
+    print("Failed task_id: " + task_id)
+    print("Current Tasks before update:")
+    print(gameLobby.task_generator.current_tasks)
+    print("\n\n")
 
     if gameLobby.has_lost:
 
@@ -251,6 +256,10 @@ def task_failed(lobby_id, task_id):
         # (the user who failed the task should send the request to this URL,
         # and therefore should get this response)
         new_task = gameLobby.task_generator.new_task(int(task_id))
+
+        print("Current Tasks after update:")
+        print(gameLobby.task_generator.current_tasks)
+        print("New task: " + str(new_task.task_id))
 
         return jsonify(new_task.serialize())
 

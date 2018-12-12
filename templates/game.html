@@ -243,6 +243,7 @@
                                     timeLeft = taskCompletionTime;
 
                                     currentTask = data;
+                                    currentID = data.task_id;
                                     objectiveTask.setText(currentTask.description);
                                 }
                             });
@@ -321,6 +322,8 @@
                     countdownActive = true;
 
                     currentTask = data.new_task;
+                    currentID = currentTask.task_id;
+
                     objectiveTask.setText(currentTask.description);
                 }
 
