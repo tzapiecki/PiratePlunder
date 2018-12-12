@@ -222,6 +222,8 @@
                 game.scene.start("main");
                 $('#loadingScreen').hide();
                 $('button').hide();
+
+                console.log("Task completion time: " + data["taskCompletionTime"]);
             };
 
             // Add in socketio event handlers
@@ -252,6 +254,7 @@
                 console.log('Section complete event recieved');
                 console.log(data["initialTasks"]);
                 console.log(data["userTasks"]);
+                console.log("Task completion time: " + data["taskCompletionTime"]);
 
             });
 
