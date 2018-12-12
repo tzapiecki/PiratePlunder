@@ -191,7 +191,8 @@ def game(lobby_id):
                 events.GAME_START,
                 {
                     "initialTasks": serializedInitialTasks,
-                    "userTasks": serializedUserTasks
+                    "userTasks": serializedUserTasks,
+                    "taskCompletionTime": gameLobby.task_completion_time
                 },
                 namespace="/game:" + lobby_id
             )
@@ -305,7 +306,8 @@ def handle_input(lobby_id, task_id):
                 events.SECTION_COMPLETE, 
                 {
                     "initialTasks": serializedInitialTasks,
-                    "userTasks": serializedUserTasks
+                    "userTasks": serializedUserTasks,
+                    "taskCompletionTime": gameLobby.task_completion_time
                 }, 
                 namespace="/game:" + lobby_id
                 )
