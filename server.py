@@ -6,7 +6,7 @@ Written by Gabriel Brown and Trevor Zapiecki
 """
 import json
 
-from flask import Flask, render_template, make_response, request, redirect
+from flask import Flask, render_template, make_response, request, redirect, jsonify
 from flask_socketio import SocketIO, emit
 
 from server_classes import events
@@ -19,7 +19,7 @@ app = Flask(__name__, static_url_path='')
 
 # The ping interval is how often it checks in with clients (1 second)
 # The ping timeout is when the server considers a client disconnected (after 3 seconds)
-socketio = SocketIO(app, ping_interval=1, ping_timeout=3) 
+socketio = SocketIO(app, ping_interval=1, ping_timeout=3, transports=['websocket']) 
 
 """
 Global variables
@@ -195,6 +195,7 @@ def game(lobby_id):
                 },
                 namespace="/game:" + lobby_id
             )
+            
     socketio.on_event("connect", playerConnects, namespace="/game:" + lobby_id)
 
     response = make_response(render_template("game.html", lobby_id=lobby_id, user_id=player.user_id))
@@ -226,8 +227,7 @@ def task_failed(lobby_id, task_id):
     if gameLobby.has_lost:
 
         # Reset for next game and let every client in lobby know that game is over
-        gameLobby.has_lost = False
-        gameLobby.task_generator.new_section()
+        gameLobby.reset()
 
         socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
@@ -243,14 +243,14 @@ def task_failed(lobby_id, task_id):
         # We don't need to include a task_id, because tasks should be unique
         # and the client that sends and ajax call to this route would be the 
         # who failed, and therefore the only one who needs a new task
-        socketio.emit(events.TASK_FAILED, namespace="/game:" + lobby_id)
+        socketio.emit(events.TASK_FAILED, { "ship_health": gameLobby.ship_health }, namespace="/game:" + lobby_id)
 
         # Generate a new task and return that as a json response
         # (the user who failed the task should send the request to this URL,
         # and therefore should get this response)
-        new_task = gameLobby.task_generator.new_task(task_id)
+        new_task = gameLobby.task_generator.new_task(int(task_id))
 
-        return make_response( { "new_task": new_task.serialize() } )
+        return jsonify(new_task.serialize())
 
 
 @app.route('/game/<lobby_id>/input/<task_id>', methods=['POST'])
@@ -276,10 +276,39 @@ def handle_input(lobby_id, task_id):
         if gameLobby.section_complete:
 
             # Reset for next section and let every player know they were successful
-            gameLobby.section_complete = False
-            gameLobby.task_generator.new_section()
+            gameLobby.reset()
 
-            socketio.emit(events.SECTION_COMPLETE, namespace="/game:" + lobby_id)
+
+            # Assign usable tasks to users and include that info
+            # plus their first tasks
+
+            # Serialize initial task assignments
+            serializedInitialTasks = {}
+            for key in gameLobby.initial_task_assignments.keys():
+                task = gameLobby.initial_task_assignments[key]
+                serializedInitialTasks[key] = task.serialize()
+
+            # Serialize tasks unique to each user
+            serializedUserTasks = {}
+            for user_id in gameLobby.user_tasks.keys():
+
+                user_task_list = gameLobby.user_tasks[user_id]
+                serialized_list = []
+
+                for task in user_task_list:
+                    serialized_list.append(task.serialize())
+
+                serializedUserTasks[user_id] = serialized_list
+
+
+            socketio.emit(
+                events.SECTION_COMPLETE, 
+                {
+                    "initialTasks": serializedInitialTasks,
+                    "userTasks": serializedUserTasks
+                }, 
+                namespace="/game:" + lobby_id
+                )
 
         else:
 
@@ -307,8 +336,7 @@ def handle_input(lobby_id, task_id):
         if gameLobby.has_lost:
 
             # Reset for next game and let every client in lobby know that game is over
-            gameLobby.has_lost = False
-            gameLobby.task_generator.new_section()
+            gameLobby.reset()
 
             socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
@@ -317,12 +345,13 @@ def handle_input(lobby_id, task_id):
             print("\n\nBAD INPUT")
 
             # Let every player know that there was bad input, and show some visual indication
-            socketio.emit(events.BAD_INPUT, { "task_id": task_id }, namespace="/game:" + lobby_id)
+            socketio.emit(events.BAD_INPUT, { "task_id": task_id, "ship_health": gameLobby.ship_health }, namespace="/game:" + lobby_id)
 
     
     print("\n\nShip health: " + str(gameLobby.ship_health) + "\n\n")
 
     return make_response()
+
 
 
 if __name__ == '__main__':

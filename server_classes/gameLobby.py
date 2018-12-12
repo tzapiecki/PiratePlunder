@@ -30,7 +30,7 @@ class GameLobby:
         self.task_fail_damage = 10      # The amount of damage failing a task deals to the ship
         self.bad_input_damage = 5       # The amount of damage pressing a the wrong button deals to the ship
 
-        self.num_tasks_to_complete = 5  # The number of tasks players must complete before moving on to a new sector
+        self.num_tasks_to_complete = 1  # The number of tasks players must complete before moving on to a new sector
         self.num_tasks_completed = 0    # The number of tasks players have actually completed
 
         self.has_won = False
@@ -110,6 +110,19 @@ class GameLobby:
 
         self.num_tasks_completed = self.num_tasks_completed + 1
         self.section_complete = self.num_tasks_completed >= self.num_tasks_to_complete
+
+
+    def reset(self):
+        """
+        Reset win conditions and ship health, ask the task generator
+        for a new set of usable tasks, and assign them to the players
+        """
+
+        self.ship_health = 100
+        self.has_won = False
+        self.has_lost = False
+        self.task_generator.new_section()
+        self.assign_tasks()
 
 
         
