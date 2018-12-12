@@ -263,7 +263,7 @@
 
                 currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : currentTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
-                taskCompletionTime = typeof data.task_completion_time !== "undefined" ? data.task_completion_time : 10000;
+                taskCompletionTime = typeof data.taskCompletionTime !== "undefined" ? data.taskCompletionTime : 10000;
                 shipHealth = typeof data.shipHealth !== "undefined" ? data.shipHealth : shipHealth;
 
                 game.scene.start("main");
@@ -334,7 +334,7 @@
             socket.on("section_complete", function(data) {
                 console.log('SECTION COMPLETED');
 
-                timeLeft = taskCompletionTime;
+                timeLeft = data.taskCompletionTime;
 
                 currentTask = data.initialTasks[userID];
                 personalTasks = data.userTasks[userID];
