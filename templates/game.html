@@ -71,6 +71,8 @@
             var sailButton,
                 tackButton;
             var text;
+            var ship;
+
 
             var personalTasks = [];
             var task;
@@ -100,8 +102,8 @@
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
 
                     text = this.add.text(32, 32, style);
+                    ship = this.add.sprite(450, 324, 'ship');
 
-                    var ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
                     this.add.sprite(225,486,'btn').setScale(0.5);
                     this.add.sprite(675,486,'btn').setScale(.5);
@@ -202,7 +204,6 @@
                         });
                     }
 
-
                 },
                 update: function () {
                     background.tilePositionX += shipSpeed;
@@ -234,6 +235,8 @@
             socket.on("bad_input", function(data) {
 
                 console.log('Bad input event received');
+                damageShip(data['ship_health'])
+
 
             });
 
@@ -242,6 +245,9 @@
 
                 console.log('Task failed event recieved');
                 console.log("Ship health: " + data["ship_health"])
+                damageShip(data['ship_health']);
+
+
 
             });
 
@@ -265,6 +271,25 @@
                 console.log('Game over event recieved');
 
             });
+
+
+            function damageShip(shipHealth){
+              if (shipHealth <=70 && shipHealth > 40){
+                ship.setTexture('ship70');
+              }
+              else if (shipHealth <=40 && shipHealth > 10){
+                ship.setTexture('ship40');
+              }
+
+              else if(shipHealth <=10 ){
+                ship.setTexture('ship0');
+              }
+
+            };
+
+
+
+
         </script>
 
         <div id="loadingScreen">
