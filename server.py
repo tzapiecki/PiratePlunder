@@ -24,9 +24,15 @@ socketio = SocketIO(app, ping_interval=1, ping_timeout=3, transports=['websocket
 """
 Global variables
 """
-stagingLobbies = {}   # Key: lobby_id, Value: lobby object
+
+# Lobbies where players can join and ready up, but hold no information relevant to the game
+# KEY: lobby_id, VALUE: lobby object
+stagingLobbies = {}   
+
+# Lobbies that players transition to when all are ready to start playing.
+# These keep track of things like ship health, number of completed tasks, etc
+# KEY: lobby_id, VALUE: lobby object
 gameLobbies = {}
-tasks = [] 
 
 
 """
@@ -44,6 +50,8 @@ def lobby(lobby_id):
     # If player is sending a status update
     if request.method == 'POST':
 
+        # Status will be "ready" or "unready", indicating whether a player has
+        # readied up or is no longer ready to start the game
         status = request.args.get("status", "none")
 
         print("\n==============\n LOBBY UPDATE \n==============\n")
@@ -51,15 +59,19 @@ def lobby(lobby_id):
         lobby = stagingLobbies[lobby_id]
 
         if status == "ready":
+
             lobby.numReadyPlayers += 1
             print(str(lobby) + "\n")
 
+            # Let other players in the lobby know that a player has readied up
             socketio.emit(
                 events.LOBBY_STATUS_CHANGED,
                 {"numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
                 namespace="/" + lobby_id
             )
 
+            # If there are at least two players and all are ready, tell
+            # the players to transition to a game lobby
             if lobby.check_ready():
                 gameLobbies[lobby_id] = GameLobby(lobby_id, lobby.numPlayers)
 
@@ -74,10 +86,12 @@ def lobby(lobby_id):
 
 
         elif status == "unready":
-            # lobby.set_ready(user_id, False)
+            
             lobby.numReadyPlayers -= 1
             print(str(lobby) + "\n")
 
+            # Let other players in the lobby know that a player is no longer
+            # ready
             socketio.emit(
                 events.LOBBY_STATUS_CHANGED,
                 {"numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
@@ -89,6 +103,7 @@ def lobby(lobby_id):
 
     # If loading the lobby page
     else:
+        
         lobby = stagingLobbies.get(lobby_id, "no_lobby")
 
         # If no lobby object with that id found, make a new one
@@ -109,6 +124,7 @@ def lobby(lobby_id):
                 { "numPlayers": lobby.numPlayers, "numReadyPlayers": lobby.numReadyPlayers},
                 namespace="/" + lobby_id
             )
+
         socketio.on_event(
             'disconnect',
             playerDisconnected,

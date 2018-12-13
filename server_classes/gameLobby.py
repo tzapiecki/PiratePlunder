@@ -1,5 +1,6 @@
 """
-Game Lobby class to keep information about each player in a game
+Game Lobby class to keep information about each player in a game,
+and the overall game progress
 
 Written by Trevor Zapiecki and Gabriel Brown
 """
