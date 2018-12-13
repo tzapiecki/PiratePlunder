@@ -74,7 +74,6 @@
 
             var personalTasks = [];
             var objectiveTask;
-            var currentID;
 
             var currentTask = {};
 
@@ -162,7 +161,6 @@
 
                     bg_sound.play();
 
-                    currentID = currentTask['task_id'];
                     objectiveTask = this.add.text(82.5,77,currentTask['description'], taskStyle);
 
                     timeLeftText = this.add.text(32, 32);
@@ -212,8 +210,6 @@
                     fail_sound = this.sound.add('failuresound');
                     bg_sound.play();
 
-                    currentID = currentTask['task_id'];
-
                     timeLeft = taskCompletionTime;
                     prevTime = this.time.now;
                     countdownActive = true;
@@ -234,7 +230,7 @@
                             countdownActive = false;
 
                             $.ajax({
-                                url: window.location.href + '/failed/' + currentID,
+                                url: window.location.href + '/failed/' + currentTask.task_id,
                                 method: 'POST',
                                 success: function (data) {
                                     data = data || {};
@@ -243,7 +239,6 @@
                                     timeLeft = taskCompletionTime;
 
                                     currentTask = data;
-                                    currentID = data.task_id;
                                     objectiveTask.setText(currentTask.description);
                                 }
                             });
@@ -322,7 +317,6 @@
                     countdownActive = true;
 
                     currentTask = data.new_task;
-                    currentID = currentTask.task_id;
 
                     objectiveTask.setText(currentTask.description);
                 }
@@ -337,7 +331,6 @@
                 timeLeft = data.taskCompletionTime;
 
                 currentTask = data.initialTasks[userID];
-                currentID = currentTask.task_id;
                 personalTasks = data.userTasks[userID];
 
                 updateButtonTexts(personalTasks);
