@@ -52,3 +52,6 @@ The templates for the lobby and game page live in this folder.
 
 ### static/...
 The login page and static images used in the game live in this folder.
+
+### server_classes/...
+All the supporting classes for the server are located here. This includes classes to represent Players, Tasks, a TaskGenerator to manage tasks and two different types of lobbies.
