@@ -221,7 +221,7 @@
                     if (countdownActive) {
                         timeLeft -= this.time.now - prevTime;
                         prevTime = this.time.now;
-                        
+
                         // If task isn't completed in time
                         if (timeLeft <= 0) {
                             timeLeft = taskCompletionTime;
@@ -276,7 +276,7 @@
                 shipSpeed *= 0.75;
 
                 shipHealth = typeof data.ship_health !== "undefined" ? data.ship_health : shipHealth;
-                
+
                 if (shipHealth <=70 && shipHealth > 40){
                     ship.setTexture('ship70');
                 }
@@ -295,7 +295,7 @@
                 shipSpeed *= 0.75;
 
                 shipHealth = typeof data.ship_health !== "undefined" ? data.ship_health : shipHealth;
-                
+
                 if (shipHealth <=70 && shipHealth > 40){
                     ship.setTexture('ship70');
                 }
@@ -304,6 +304,7 @@
                 }
                 else if(shipHealth <=10 ){
                     ship.setTexture('ship0');
+                    shipSpeed=0;
                 }
             });
 
