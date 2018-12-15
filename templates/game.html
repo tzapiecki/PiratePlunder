@@ -218,28 +218,6 @@
                     updateButtonTexts(personalTasks);
                     bg_sound.play();
 
-
-                        if (i === 0) {
-                            xPos = 112;
-                            yPos = 470;
-                        }
-                        else if (i === 1) {
-                            xPos = 550;
-                            yPos = 470;
-                        }
-                        else if (i === 2) {
-                            xPos = 112;
-                            yPos = 580;
-                        }
-                        else if (i === 3) {
-                            xPos =  550;
-                            yPos = 580;
-                        }
-                        else {
-                            console.log("Too many tasks per player. Setting buttons to passed in positions");
-                            xPos = personalTask["button_position"][0];
-                            yPos = personalTask["button_position"][1];
-                        }
                     timeLeft = taskCompletionTime;
                     prevTime = this.time.now;
                     countdownActive = true;
