@@ -89,12 +89,13 @@
                     this.load.image('ship40',"ship40.png");
                     this.load.image('ship10',"ship10.png");
                     this.load.image('ship0',"ship0.png");
-                    this.load.image('btn','btn6.png');
-                    this.load.image('qtn-mark','qtn-mark.png');
-                    this.load.image('task-panel','task-panel-btn.png');
+                    this.load.image('btn','btn10.png');
+                    this.load.image('qtn-mark','Asset8.png');
+                    this.load.image('task-panel','task-panel.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.wav');
+                    this.load.image('piratelogo','pr.jpg');
                 },
                 create: function () {
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
@@ -103,14 +104,14 @@
 
                     var ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
-                    this.add.sprite(225,486,'btn').setScale(0.5);
+                    this.add.sprite(225,486,'btn').setScale(.5);
                     this.add.sprite(675,486,'btn').setScale(.5);
                     this.add.sprite(225,596,'btn').setScale(.5);
                     this.add.sprite(675,596,'btn').setScale(.5);
-                    this.add.sprite(450,90,'task-panel').setScale(2);
+                    this.add.sprite(420,110,'task-panel').setScale(0.8);
                     this.add.sprite(850, 50,'qtn-mark').setScale(0.5);
 
-                    var style = { font: "bold 28px Sedgwick Ave", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
+                    var style = { font: "bold 20px Sedgwick Ave", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
 
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
@@ -118,7 +119,7 @@
                     bg_sound.play();
 
                     currentID=currentTask['task_id'];
-                    task=this.add.text(82.5,77,currentTask['description'],style);
+                    task=this.add.text(200,77,currentTask['description'],style);
 
                     timedEvent = this.time.addEvent({ delay: 10000, callback: failTask, callbackScope: this });
 
@@ -156,19 +157,19 @@
                         id = p_task['task_id']
 
                         if (i === 0) {
-                            xPos = 112.5;
+                            xPos = 112;
                             yPos = 470;
                         }
                         else if (i === 1) {
-                            xPos = 522.5;
+                            xPos = 550;
                             yPos = 470;
                         }
                         else if (i === 2) {
-                            xPos = 112.5;
+                            xPos = 112;
                             yPos = 580;
                         }
                         else if (i === 3) {
-                            xPos =  522.5;
+                            xPos =  550;
                             yPos = 580;
                         }
                         else {
@@ -233,12 +234,16 @@
 
             socket.on("bad_input", function(data) {
 
+                damageShip(data["ship_health"]);
+
                 console.log('Bad input event received');
 
             });
 
 
             socket.on("task_failed", function(data) {
+
+                damageShip(data["ship_health"]);
 
                 console.log('Task failed event recieved');
                 console.log("Ship health: " + data["ship_health"])
