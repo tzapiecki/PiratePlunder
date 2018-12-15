@@ -92,14 +92,15 @@
             var shipHealth;
             var shipSpeed = -2;
 
+
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
             function updateButtonTexts (taskList) {
                 for (var i = 0; i < taskList.length; i++) {
-                    let personalTask = personalTasks[i];
-                    let pTaskID = personalTask['task_id']
+                    personalTask = personalTasks[i];
+                    pTaskID = personalTask['task_id']
 
-                    let currentButtonText = btn1text;
+                    currentButtonText = btn1text;
 
                     if (i === 0) {
                         currentButtonText = btn1text;
