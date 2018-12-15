@@ -69,8 +69,6 @@
 
             var background;
 
-            var gameOverWindow;
-
             var sailButton,
                 tackButton;
 
@@ -141,18 +139,15 @@
                     this.load.image('btn','btn10.png');
                     this.load.image('qtn-mark','Asset8.png');
                     this.load.image('task-panel','task-panel.png');
-                    this.load.image('game-over','game-over.jpg');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.mp3');
-                    this.load.audio('gameover','game_over.wav');
 
                 },
                 create: function () {
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     fail_sound=this.sound.add('failuresound');
-                    gameover_sound=this.sound.add('gameover');
 
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
 
@@ -164,7 +159,6 @@
                     this.add.sprite(675,596,'btn').setScale(.5);
                     this.add.sprite(420,110,'task-panel').setScale(0.8);
                     this.add.sprite(850, 50,'qtn-mark').setScale(0.5);
-                    gameOverWindow = this.add.sprite(450,300,'game-over').setScale(0.5);
 
                     // Task panel style
                     var taskStyle = {
@@ -260,6 +254,26 @@
                 }
             };
             game.scene.add("main", main);
+
+            var gameOver = function () {};
+            gameOver.prototype = {
+                preload: function () {
+                    // Load & Define our game assets
+                    this.load.setBaseURL("{{ url_for('static', filename='assets') }}");
+                },
+                create: function () {
+                    let gameOverStyle = {
+                        font: "bold 120px Sedgwick Ave",
+                        fill: "#ffffff",
+                        boundsAlignH: "center",
+                        boundsAlignV: "middle"
+                    };
+                    let gameOverText = this.add.text(450, 324, "GAME OVER", gameOverStyle);
+                    gameOverText.setOrigin(0.5);
+                }
+            };
+            game.scene.add("gameOver", gameOver);
+
             var lobbyID = "{{lobby_id}}",
                 userID = "{{user_id}}";
 
@@ -321,10 +335,9 @@
                 else if (shipHealth <=40 && shipHealth > 10){
                     ship.setTexture('ship40');
                 }
-                else if(shipHealth <=10 && shipHealth >0 ){
+                else if (shipHealth <=10 && shipHealth > 0 ){
                     ship.setTexture('ship0');
                     shipSpeed=0;
-                    gameOverWindow.setTexture('game-over');
                 }
 
             });
@@ -362,10 +375,8 @@
             });
 
             socket.on("game_over", function(data) {
-
-
-                console.log('Game over event recieved');
-
+                game.scene.stop("main");
+                game.scene.start("gameOver");
             });
         </script>
 
