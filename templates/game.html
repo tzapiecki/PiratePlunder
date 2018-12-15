@@ -53,6 +53,51 @@
             button:hover {
                 cursor: pointer;
             }
+            #instructions > div {
+                position: absolute;
+                z-index: 10;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #fdab5e;
+                color: #000000;
+                width: 75%;
+                max-height: 75%;
+                padding: 2rem;
+                overflow: auto;
+                border-radius: 2rem;
+                border: 4px solid #1b3aa1;
+            }
+            #instructions > div > div {
+                display: inline-block;
+                position: absolute;
+                top: 1.25rem;
+                right: 1rem;
+                font-size: 4rem;
+                width: 3rem;
+                height: 3rem;
+                line-height: 3rem;
+                text-align: center;
+                background-color: transparent;
+                color: black;
+            }
+            #instructions > div > div:hover {
+                text-shadow: 0 0 10px #ffffff;
+                cursor: pointer;
+            }
+            #instructions h1, #instructions p {
+                color: #000000;
+                background-color: #fdab5e;
+                font-family: 'Signika', sans-serif;
+                text-align: center;
+            }
+            #instructions h1 {
+                font-size: 4rem;
+            }
+            #instructions p {
+                font-size: 1.5rem;
+                margin-top: 0.5rem;
+            }
         </style>
 
         <script type="text/javascript" src="{{ url_for('static', filename='packages/jquery.min.js') }}"></script>
@@ -153,12 +198,14 @@
 
                     ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
-                    this.add.sprite(225,486,'btn').setScale(.5);
-                    this.add.sprite(675,486,'btn').setScale(.5);
-                    this.add.sprite(225,596,'btn').setScale(.5);
-                    this.add.sprite(675,596,'btn').setScale(.5);
+
                     this.add.sprite(420,110,'task-panel').setScale(0.8);
-                    this.add.sprite(850, 50,'qtn-mark').setScale(0.5);
+                    var instructionsButton = this.add.sprite(850, 50,'qtn-mark');
+                    instructionsButton.setScale(0.5);
+                    instructionsButton.setInteractive({useHandCursor: true});
+                    instructionsButton.on("pointerdown", function () {
+                        document.getElementById("instructions").style = "display: block;";
+                    });
 
                     // Task panel style
                     var taskStyle = {
@@ -385,5 +432,32 @@
             <label>WAITING FOR OTHER PLAYERS TO CONNECT</label>
         </div>
         <button onclick="gameStart({});">GO TO GAME</button>
+        <div id="instructions" style="display: none">
+            <div>
+                <div onclick="document.getElementById('instructions').style = 'display: none;';">✖</div>
+                <h1>How To Play</h1>
+                <p>
+                    Pirate Plunder is a game in which you and your teammates try to keep
+                    your ship afloat. Everyone on your team will be given a task that 
+                    must be completed within a certain amount of time. Some tasks you
+                    can complete, but other tasks you will need to ask your teammates
+                    to do.
+                </p>
+                <p>
+                    When you or a teammate completes the task that you have been assigned,
+                    a new task will be assigned to you. Completing enough tasks will advance
+                    your team to a new stage, where you will be given new tasks that you
+                    can complete!
+                </p>
+                <p>
+                    If you fail to complete a task on time, or if you complete the wrong task,
+                    your ship will take damage. If your ship takes too much damage, it is 
+                    game over....
+                </p>
+                <p>
+                    Good luck!
+                </p>
+            </div>
+        </div>
     </body>
 </html>
