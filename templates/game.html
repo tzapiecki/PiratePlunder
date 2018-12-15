@@ -142,11 +142,15 @@
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.mp3');
+                    this.load.audio('gameover','game_over.wav');
+
                 },
                 create: function () {
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     fail_sound=this.sound.add('failuresound');
+                    gameover_sound=this.sound.add('gameover');
+
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
 
                     ship = this.add.sprite(450, 324, 'ship');
@@ -165,9 +169,7 @@
                         boundsAlignH: "center",
                         boundsAlignV: "middle" };
 
-                    bg_sound=this.sound.add('bgsound');
-                    arr_sound=this.sound.add('arrsound');
-                    fail_sound=this.sound.add('failuresound');
+
                     bg_sound.play();
 
                     currentID=currentTask['task_id'];
@@ -214,10 +216,6 @@
                     }
 
                     updateButtonTexts(personalTasks);
-
-                    bg_sound = this.sound.add('bgsound');
-                    arr_sound = this.sound.add('arrsound');
-                    fail_sound = this.sound.add('failuresound');
                     bg_sound.play();
 
 
@@ -307,6 +305,7 @@
 
 
                 console.log('Bad input event received');
+                fail_sound.setVolume(0.1);
                 fail_sound.play();
                 shipSpeed *= 0.75;
 
@@ -360,6 +359,7 @@
                 }
 
                 shipSpeed -= 2;
+                arr_sound.setVolume(0.5);
                 arr_sound.play();
             });
 
@@ -377,7 +377,7 @@
             });
 
             socket.on("game_over", function(data) {
-
+                gameover_sound.play();
                 console.log('Game over event recieved');
 
             });
