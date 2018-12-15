@@ -202,7 +202,7 @@
                         let button = buttonList[i];
                         let btnText = buttonTextList[i];
 
-                        button.setInteractive();
+                        button.setInteractive({useHandCursor: true});
                         button.on("pointerdown", function () {
                             let taskID = personalTaskText.get(btnText.text);
 
