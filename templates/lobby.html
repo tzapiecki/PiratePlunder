@@ -53,11 +53,9 @@
                 updateLobbyMembers(serverData);
                 let readyBox = document.querySelector('#lobbyPage .ready input') || {};
                 readyBox.checked = false;
-                alert("Another player has disconnected!");
             });
 
             socket.on('disconnect', function () {
-                alert("You lost connection to the server!");
                 let readyBox = document.querySelector('#lobbyPage .ready input') || {};
                 readyBox.checked = false;
             })
