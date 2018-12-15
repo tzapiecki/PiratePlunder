@@ -92,14 +92,15 @@
             var shipHealth;
             var shipSpeed = -2;
 
+
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
             function updateButtonTexts (taskList) {
                 for (var i = 0; i < taskList.length; i++) {
-                    let personalTask = personalTasks[i];
-                    let pTaskID = personalTask['task_id']
+                    personalTask = personalTasks[i];
+                    pTaskID = personalTask['task_id']
 
-                    let currentButtonText = btn1text;
+                    currentButtonText = btn1text;
 
                     if (i === 0) {
                         currentButtonText = btn1text;
@@ -238,8 +239,8 @@
                         }
                         else {
                             console.log("Too many tasks per player. Setting buttons to passed in positions");
-                            xPos = p_task["button_position"][0];
-                            yPos = p_task["button_position"][1];
+                            xPos = personalTask["button_position"][0];
+                            yPos = personalTask["button_position"][1];
                         }
                     timeLeft = taskCompletionTime;
                     prevTime = this.time.now;
