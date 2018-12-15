@@ -1,5 +1,6 @@
 """
-Game Lobby class to keep information about each player in a game
+Game Lobby class to keep information about each player in a game,
+and the overall game progress
 
 Written by Trevor Zapiecki and Gabriel Brown
 """
@@ -10,8 +11,8 @@ from .task_generator import TaskGenerator
 
 class GameLobby:
 
-    INITIAL_NUM_TASKS_TO_COMPLETE = 1       
-    INITIAL_TASK_COMPLETION_TIME = 10000    # In milliseconds
+    INITIAL_NUM_TASKS_TO_COMPLETE = 5       
+    INITIAL_TASK_COMPLETION_TIME = 15000    # In milliseconds
 
     def __init__(self, lobby_id, numPlayers):
         """Constructor for Lobby"""

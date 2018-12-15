@@ -66,17 +66,63 @@
                 width: 900,
                 height: 648
             });
+
             var background;
-            var shipSpeed = -2;
+
             var sailButton,
                 tackButton;
-            var text;
 
             var personalTasks = [];
-            var task;
-            var currentID;
+            var objectiveTask;
+
+            var currentTask = {};
+
+            var taskCompletionTime = 10000;
+
+            var timeLeft,
+                timeLeftText;
+
+            var currentTime;
+            var countdownActive = false;
+
+            var button1, button2, button3, button4;
+            var btn1text, btn2text, btn3text, btn4text;
+
+            var ship;
+            var shipHealth;
+            var shipSpeed = -2;
 
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
+
+            function updateButtonTexts (taskList) {
+                for (var i = 0; i < taskList.length; i++) {
+                    let personalTask = personalTasks[i];
+                    let pTaskID = personalTask['task_id']
+
+                    let currentButtonText = btn1text;
+
+                    if (i === 0) {
+                        currentButtonText = btn1text;
+                    }
+                    else if (i === 1) {
+                        currentButtonText = btn2text;
+                    }
+                    else if (i === 2) {
+                        currentButtonText = btn3text;
+                    }
+                    else if (i === 3) {
+                        currentButtonText = btn4text;
+                    }
+                    else {
+                        continue
+                    }
+
+                    currentButtonText.text = personalTask["button_text"];
+
+                    // To make event handlers work properly
+                    personalTaskText.set(personalTask["button_text"], pTaskID);
+                }
+            }
 
             var main = function () {};
             main.prototype = {
@@ -94,15 +140,15 @@
                     this.load.image('task-panel','task-panel.png');
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
-                    this.load.audio('failuresound','failure.wav');
-                    this.load.image('piratelogo','pr.jpg');
+                    this.load.audio('failuresound','failure.mp3');
                 },
                 create: function () {
+                    bg_sound=this.sound.add('bgsound');
+                    arr_sound=this.sound.add('arrsound');
+                    fail_sound=this.sound.add('failuresound');
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
 
-                    text = this.add.text(32, 32, style);
-
-                    var ship = this.add.sprite(450, 324, 'ship');
+                    ship = this.add.sprite(450, 324, 'ship');
                     ship.setScale(0.4);
                     this.add.sprite(225,486,'btn').setScale(.5);
                     this.add.sprite(675,486,'btn').setScale(.5);
@@ -111,7 +157,12 @@
                     this.add.sprite(420,110,'task-panel').setScale(0.8);
                     this.add.sprite(850, 50,'qtn-mark').setScale(0.5);
 
-                    var style = { font: "bold 20px Sedgwick Ave", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
+                    // Task panel style
+                    var taskStyle = {
+                        font: "bold 20px Sedgwick Ave",
+                        fill: "#ffffff",
+                        boundsAlignH: "center",
+                        boundsAlignV: "middle" };
 
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
@@ -119,42 +170,55 @@
                     bg_sound.play();
 
                     currentID=currentTask['task_id'];
-                    task=this.add.text(200,77,currentTask['description'],style);
 
-                    timedEvent = this.time.addEvent({ delay: 10000, callback: failTask, callbackScope: this });
+                    // Task that appears on top of the screen
+                    objectiveTask = this.add.text(200,77,currentTask['description'], taskStyle);
 
+                    timeLeftText = this.add.text(32, 32);
 
-                    function failTask() {
-
-                      fail_sound.play();
-
-                      text.destroy();
-                      task.destroy();
-
-                      $.ajax({
-                          url: window.location.href + '/failed/' + currentID,
-                          method: 'POST',
-                          success: function(newTask) {
-
-                              console.log('Successfully sent failure ajax call!');
-
-                              console.log('New task:');
-                              console.log(newTask);
-                          }
-                      });
-
+                    // Task Buttons
+                    let buttonTextStyle = {
+                        font: "bold 28px Sedgwick Ave",
+                        fill: "#ffffff",
+                        boundsAlignH: "center",
+                        boundsAlignV: "middle"
                     };
-                    var buttonTextStyle = { font: "bold 28px Sedgwick Ave", fill: "#ffffff", boundsAlignH: "center", boundsAlignV: "middle" };
-                    for (var i = 0; i < personalTasks.length; i++) {
 
-                        var taskText;
-                        var p_task;
-                        var id;
-                        var xPos;
-                        var yPos;
+                    button1 = this.add.sprite(225, 485, 'btn').setScale(0.5);
+                    button2 = this.add.sprite(675, 486, 'btn').setScale(0.5);
+                    button3 = this.add.sprite(225, 596, 'btn').setScale(0.5);
+                    button4 = this.add.sprite(675, 596, 'btn').setScale(0.5);
 
-                        p_task = personalTasks[i];
-                        id = p_task['task_id']
+                    btn1text = this.add.text(112.5, 470, "", buttonTextStyle);
+                    btn2text = this.add.text(522.5, 470, "", buttonTextStyle);
+                    btn3text = this.add.text(112.5, 580, "", buttonTextStyle);
+                    btn4text = this.add.text(522.5, 580, "", buttonTextStyle);
+
+                    let buttonList = [button1, button2, button3, button4];
+                    let buttonTextList = [btn1text, btn2text, btn3text, btn4text];
+
+                    for (var i = 0; i < 4; i++) {
+                        let button = buttonList[i];
+                        let btnText = buttonTextList[i];
+
+                        button.setInteractive();
+                        button.on("pointerdown", function () {
+                            let taskID = personalTaskText.get(btnText.text);
+
+                            $.ajax({
+                                url: window.location.href + '/input/' + taskID,
+                                method: 'POST'
+                            });
+                        })
+                    }
+
+                    updateButtonTexts(personalTasks);
+
+                    bg_sound = this.sound.add('bgsound');
+                    arr_sound = this.sound.add('arrsound');
+                    fail_sound = this.sound.add('failuresound');
+                    bg_sound.play();
+
 
                         if (i === 0) {
                             xPos = 112;
@@ -177,92 +241,138 @@
                             xPos = p_task["button_position"][0];
                             yPos = p_task["button_position"][1];
                         }
-
-                        taskText=this.add.text(xPos, yPos, p_task["button_text"], buttonTextStyle);
-                        taskText.setInteractive();
-                        taskText.on("pointerdown", completeTask);
-
-                        // To make event handlers work properly
-                        personalTaskText.set(p_task["button_text"], id);
-                  }
-
-                    function completeTask() {
-                        shipSpeed= -4;
-                        arr_sound.play();
-
-                        var taskID = personalTaskText.get(this.text);
-
-                        /// 'game/<lobby_id>/input/<task_id>'
-                        $.ajax({
-                            url: window.location.href + '/input/' + taskID,
-                            method: 'POST',
-                            success: function() {
-
-                                console.log('Successfully sent input ajax call!');
-                            }
-                        });
-                    }
-
-
+                    timeLeft = taskCompletionTime;
+                    prevTime = this.time.now;
+                    countdownActive = true;
                 },
                 update: function () {
                     background.tilePositionX += shipSpeed;
-                    text.setText('Event.progress: ' + timedEvent.getProgress().toString().substr(0, 4));
+                    timeLeftText.setText('Time Left: ' + (timeLeft / 1000).toString().substr(0,3));
+
+
+                    if (countdownActive) {
+                        timeLeft -= this.time.now - prevTime;
+                        prevTime = this.time.now;
+
+                        // If task isn't completed in time
+                        if (timeLeft <= 0) {
+                            timeLeft = taskCompletionTime;
+
+                            objectiveTask.setText("Loading next task....");
+                            countdownActive = false;
+
+                            $.ajax({
+                                url: window.location.href + '/failed/' + currentTask.task_id,
+                                method: 'POST',
+                                success: function (data) {
+                                    data = data || {};
+
+                                    countdownActive = true;
+                                    timeLeft = taskCompletionTime;
+
+                                    currentTask = data;
+                                    objectiveTask.setText(currentTask.description);
+                                }
+                            });
+                        }
+                    }
                 }
             };
             game.scene.add("main", main);
             var lobbyID = "{{lobby_id}}",
                 userID = "{{user_id}}";
 
-            var currentTask = [];
             var socket = io.connect(document.domain + ':' + location.port);
             socket.nsp = "/game:" + "{{ lobby_id }}";
 
             var gameStart = function (data) {
                 data = data || {};
+
                 currentTask = typeof data.initialTasks !== "undefined" ? data.initialTasks[userID] : currentTask;
                 personalTasks = typeof data.userTasks !== "undefined" ? data.userTasks[userID] : personalTasks;
+                taskCompletionTime = typeof data.taskCompletionTime !== "undefined" ? data.taskCompletionTime : 10000;
+                shipHealth = typeof data.shipHealth !== "undefined" ? data.shipHealth : shipHealth;
+
                 game.scene.start("main");
                 $('#loadingScreen').hide();
                 $('button').hide();
-
-                console.log("Task completion time: " + data["taskCompletionTime"]);
             };
 
             // Add in socketio event handlers
             socket.on("game_start", gameStart);
 
             socket.on("bad_input", function(data) {
+                data = data || {};
 
-                damageShip(data["ship_health"]);
 
                 console.log('Bad input event received');
+                fail_sound.play();
+                shipSpeed *= 0.75;
 
+                shipHealth = typeof data.ship_health !== "undefined" ? data.ship_health : shipHealth;
+
+                if (shipHealth <=70 && shipHealth > 40){
+                    ship.setTexture('ship70');
+                }
+                else if (shipHealth <=40 && shipHealth > 10){
+                    ship.setTexture('ship40');
+                }
+                else if(shipHealth <=10 ){
+                    ship.setTexture('ship0');
+                }
             });
 
-
             socket.on("task_failed", function(data) {
+                data = data || {};
 
-                damageShip(data["ship_health"]);
+                fail_sound.play();
+                shipSpeed *= 0.75;
 
                 console.log('Task failed event recieved');
                 console.log("Ship health: " + data["ship_health"])
+                shipHealth = typeof data.ship_health !== "undefined" ? data.ship_health : shipHealth;
 
+                if (shipHealth <=70 && shipHealth > 40){
+                    ship.setTexture('ship70');
+                }
+                else if (shipHealth <=40 && shipHealth > 10){
+                    ship.setTexture('ship40');
+                }
+                else if(shipHealth <=10 ){
+                    ship.setTexture('ship0');
+                    shipSpeed=0;
+                }
             });
 
             socket.on("task_complete", function(data) {
+                console.log('TASK COMPLETED');
 
-                console.log('Task complete event recieved');
+                data = data || {};
 
+                if (data.completed_task_id === currentTask.task_id) {
+                    timeLeft = taskCompletionTime;
+                    countdownActive = true;
+
+                    currentTask = data.new_task;
+
+                    objectiveTask.setText(currentTask.description);
+                }
+
+                shipSpeed -= 2;
+                arr_sound.play();
             });
 
             socket.on("section_complete", function(data) {
+                console.log('SECTION COMPLETED');
 
-                console.log('Section complete event recieved');
-                console.log(data["initialTasks"]);
-                console.log(data["userTasks"]);
-                console.log("Task completion time: " + data["taskCompletionTime"]);
+                timeLeft = data.taskCompletionTime;
 
+                currentTask = data.initialTasks[userID];
+                personalTasks = data.userTasks[userID];
+
+                updateButtonTexts(personalTasks);
+
+                objectiveTask.setText(currentTask.description);
             });
 
             socket.on("game_over", function(data) {

@@ -19,21 +19,37 @@ class TaskGenerator:
     # store them in a text file or database or something
     tasks.append(Task(0, "Rocks incoming! HARD TO PORT!", "Turn Portside", (100, 95)))
     tasks.append(Task(1, "To the east, an enemy vessel! Take us Starboard!", "Turn Starboard", (600, 95)))
-    tasks.append(Task(2, "There's a rough wind coming, trim the jib before it hits us.", "Pull down Jib", (620, 110)))
+    tasks.append(Task(2, "There's a rough wind coming,\ntrim the jib before it hits us.", "Pull down Jib", (620, 110)))
     tasks.append(Task(3, "We're going the wrong direction. Spin the tiller! ", "Turn Tiller", (130, 70)))
     tasks.append(Task(4, "The enemy's about to fire! Take cover and save yourself!", "Take cover", (50, 100)))
     tasks.append(Task(5, "Load the cannons and prepare to fire!", "Load cannons", (70, 100)))
     tasks.append(Task(6, "Arr, there goes my monkey. Grab him for me, will you?", "Catch Monkey", (100, 100)))
     tasks.append(Task(7, "The cannons be ready! FIRE AWAY!", "Fire the cannons", (50, 10)))
     tasks.append(Task(8, "Your parrot looks a bit lonely, Give him some love, will ya?", "Pet the Parrot", (50, 10)))
-    tasks.append(Task(9, "What arrrrrr ya lookin at, huh? You better keep your peepers away from me eyepatch, or I'll gut ya.", "Look away from eyepatch", (50, 10)))
+    tasks.append(Task(9, "What arrr ya lookin at, huh?\nKeep your peepers away from me eyepatch, or I'll gut ya.", "Look away from eyepatch", (50, 10)))
     tasks.append(Task(10, "We've got a traitor on board. Ready the plank.", "Lower the plank", (50, 10)))
     tasks.append(Task(11, "Is that a real gold doubloon? Bite it and tell me!", "Bite the doubloon", (50, 10)))
-    tasks.append(Task(12, "Arrrr, what lies ahead? Break out your telescope and tell me what's on the horizon.", "Scan the horizon", (50, 10)))
-    tasks.append(Task(13, "Storm ahead. Best give Davey Jones his dues, else he'll be taking more souls tonight", "Drop Dave Jones offering into the sea", (50, 10)))
+    tasks.append(Task(12, "Arrrr, what lies ahead? Break out your telescope\nand tell me what's on the horizon.", "Scan the horizon", (50, 10)))
+    tasks.append(Task(13, "Storm ahead. Best give Davey Jones an offering if we plan to survive.", "Drop offering into the sea", (50, 10)))
     tasks.append(Task(14, "We're out of cannonballs! Fill the cannons with whatever you can find!", "Load cannons with silverware", (50, 10)))
-    tasks.append(Task(15, "A brawl be breakin out on the main deck. Unload your pistol and silence that rabble.", "Stop brawl", (50, 10)))
+    tasks.append(Task(15, "A brawl be breakin out on the main deck. Silence that lot!", "Stop brawl", (50, 10)))
     tasks.append(Task(16, "That lad has quite a bounty! SEIZE HIM!", "Capture bounty", (50, 10)))
+    tasks.append(Task(17, "The lads are feeling restless before the raid.\nGrab your accordion, soothe our souls.", "Play accordion", (50, 10)))
+    tasks.append(Task(18, "Where is that blasted booty?\nLET ME SEE THAT MAP.", "Find the map", (50, 10)))
+    tasks.append(Task(19, "X marks the spot, the treasure's here! Drop the anchor!", "Drop anchor", (50, 10)))
+    tasks.append(Task(20, "Grab me a tankard of ale, I'm parched", "Bring over ale", (50, 10)))
+    tasks.append(Task(21, "The lads need some grub. Get cooking!", "Cook up grub", (50, 10)))
+    tasks.append(Task(22, "Blast those landlubbers! Reload your pistols and fire again!", "Reload pistol", (50, 10)))
+    tasks.append(Task(23, "Look at this place, it's disgusting! SWAB THE DECK.", "Clean the deck", (50, 10)))
+    tasks.append(Task(24, "Chow down on an orange, lest ye succumb to scurvy", "Eat orange", (50, 10)))
+    tasks.append(Task(25, "So it's mutiny you want? TIE HIM TO THE MAST!", "Tie mutineer to mast", (50, 10)))
+    tasks.append(Task(26, "Arr, this blasted treasure chest. Can anyone pick a lock?", "Pick lock", (50, 10)))
+    tasks.append(Task(27, "He knew the consequences of stealing from our stash.\nGive him 100 lashes.", "Lash thief", (50, 10)))
+    tasks.append(Task(28, "Arrr, what beautiful jewels.\nHold them in the light, let me see their beauty.", "Hold up jewels", (50, 10)))
+    tasks.append(Task(29, "So YOU want to be captain, do you?\nDo ye dare challenge me?", "Challenge Captain", (50, 10)))
+    tasks.append(Task(30, "That storm must have rattled the cargo.\nCheck and see if everything's in order.", "Check cargo", (50, 10)))
+    tasks.append(Task(31, "Arrr, the gunpowder is soaked. Go into town\nand see if you can't sneak us a few barrels", "Steal gunpowder", (50, 10)))
+
 
 
     # # fill with sample task data
@@ -69,7 +85,16 @@ class TaskGenerator:
         Randomnly pick the next task from usable_tasks, provided it's not currently active
         """
 
-        new_task = self.current_tasks[old_task_id]
+        new_task = self.current_tasks.get(old_task_id, None)
+        if new_task is None:
+
+            print("\n\n FAILED TASK NOT IN CURRENT TASKS")
+            print("Old task ID: " + str(old_task_id))
+            print("Current tasks: ")
+            print(self.current_tasks)
+            print("\n\n")
+
+            return Task(0, "NO MORE TASKS", "NO MORE TASKS", (0, 0))
 
         usable_task_keys = list(self.usable_tasks.keys())
 
