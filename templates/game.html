@@ -422,6 +422,9 @@
             });
 
             socket.on("game_over", function(data) {
+
+                console.log("Num sections completed: " + data.final_section)
+
                 game.scene.stop("main");
                 game.scene.start("gameOver");
             });

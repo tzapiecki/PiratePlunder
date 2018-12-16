@@ -250,9 +250,8 @@ def task_failed(lobby_id, task_id):
     if gameLobby.has_lost:
 
         # Reset for next game and let every client in lobby know that game is over
+        socketio.emit(events.GAME_OVER, { "final_section": gameLobby.section_number }, namespace="/game:" + lobby_id)
         gameLobby.reset()
-
-        socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
         # I don't think we want to redirect here. We probably want to play some sort
         # of animation on the client side and let users click a button to decide
@@ -365,9 +364,8 @@ def handle_input(lobby_id, task_id):
         if gameLobby.has_lost:
 
             # Reset for next game and let every client in lobby know that game is over
+            socketio.emit(events.GAME_OVER, { "final_section": gameLobby.section_number }, namespace="/game:" + lobby_id)
             gameLobby.reset()
-
-            socketio.emit(events.GAME_OVER, namespace="/game:" + lobby_id)
 
         else:
 
