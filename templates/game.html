@@ -40,19 +40,6 @@
                 background-color: transparent;
                 text-align: center;
             }
-            button {
-                font-size: 3rem;
-                width: 10rem;
-                position: absolute;
-                bottom: 1rem;
-                right: 1rem;
-                background-color: white;
-                color: black;
-                z-index: 50;
-            }
-            button:hover {
-                cursor: pointer;
-            }
             #instructions > div {
                 position: absolute;
                 z-index: 10;
@@ -466,7 +453,6 @@
             <div></div>
             <label>WAITING FOR OTHER PLAYERS TO CONNECT</label>
         </div>
-        <button onclick="gameStart({});">GO TO GAME</button>
         <div id="instructions" style="display: none">
             <div>
                 <div onclick="document.getElementById('instructions').style = 'display: none;';">✖</div>
