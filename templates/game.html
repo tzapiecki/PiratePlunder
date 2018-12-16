@@ -114,6 +114,8 @@
 
             var background;
 
+            var bg_sound;
+
             var sailButton,
                 tackButton;
 
@@ -137,6 +139,7 @@
             var shipHealth;
             var shipSpeed = -2;
 
+            var sectionReached = 0;
 
             var personalTaskText = new Map();   // Key: text of Text Objects, Value: task_id
 
@@ -315,8 +318,37 @@
                         boundsAlignH: "center",
                         boundsAlignV: "middle"
                     };
-                    let gameOverText = this.add.text(450, 324, "GAME OVER", gameOverStyle);
+                    let gameOverText = this.add.text(450, 216, "GAME OVER", gameOverStyle);
                     gameOverText.setOrigin(0.5);
+
+                    let sectionReachedText = this.add.text(
+                        450,
+                        350,
+                        "Farthest section reached: " + sectionReached,
+                        {
+                            font: "bold 60px Sedgwick Ave",
+                            fill: "#ffffff",
+                            boundsAlignH: "center",
+                            boundsAlignV: "middle"
+                        }
+                    );
+                    sectionReachedText.setOrigin(0.5);
+
+                    let returnRectangle = this.add.rectangle(450, 500, 350, 50, 0xffffff);
+                    returnRectangle.setOrigin(0.5);
+                    returnRectangle.setInteractive({useHandCursor: true});
+                    returnRectangle.on("pointerdown", function () {
+                        window.location.href = "/";
+                    });
+
+                    let returnToMainText = this.add.text(450, 500, "Return to Main Screen", {
+                        font: "bold 30px Sedgwick Ave",
+                        fill: "#000000",
+                        boundAlignH: "center",
+                        boundsAlignV: "middle"
+                    });
+                    returnToMainText.setOrigin(0.5);
+                    
                 }
             };
             game.scene.add("gameOver", gameOver);
@@ -422,10 +454,10 @@
             });
 
             socket.on("game_over", function(data) {
-
-                console.log("Num sections completed: " + data.final_section)
+                sectionReached = data.final_section;
 
                 game.scene.stop("main");
+                bg_sound.stop();
                 game.scene.start("gameOver");
             });
         </script>
