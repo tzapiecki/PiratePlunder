@@ -302,7 +302,7 @@ def handle_input(lobby_id, task_id):
         if gameLobby.section_complete:
 
             # Reset for next section and let every player know they were successful
-            gameLobby.reset()
+            gameLobby.new_section()
 
             print("Num tasks to complete: " + str(gameLobby.num_tasks_to_complete))
 

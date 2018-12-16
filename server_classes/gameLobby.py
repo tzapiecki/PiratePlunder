@@ -103,9 +103,6 @@ class GameLobby:
         self.ship_health = self.ship_health - self.task_fail_damage
         self.has_lost = self.ship_health <= 0
 
-        if self.has_lost:
-            self.section_number = 0
-
 
     def bad_input(self):
         """
@@ -123,11 +120,12 @@ class GameLobby:
         when a user successfully completes a task
         """
 
-        self.num_tasks_completed = self.num_tasks_completed + 1
+        self.num_tasks_completed += 1
         self.section_complete = self.num_tasks_completed >= self.num_tasks_to_complete
 
         if self.section_complete:
             self.section_number += 1
+            self.num_tasks_completed = 0
 
 
     def adjust_challenge(self):
@@ -151,9 +149,23 @@ class GameLobby:
         for a new set of usable tasks, and assign them to the players
         """
 
+        self.section_number = 0
+        self.num_tasks_completed = 0
         self.ship_health = 100
         self.has_won = False
         self.has_lost = False
+        self.task_generator.new_section()
+        self.adjust_challenge()
+        self.assign_tasks()
+
+    def new_section(self):
+        """
+        Essentially a lighter version of reset(). The win conditions
+        and section number should not be reset with every new section.
+        """
+
+        self.num_tasks_completed = 0
+        self.ship_health = 100
         self.task_generator.new_section()
         self.adjust_challenge()
         self.assign_tasks()
