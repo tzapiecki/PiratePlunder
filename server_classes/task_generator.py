@@ -30,7 +30,7 @@ class TaskGenerator:
     tasks.append(Task(10, "We've got a traitor on board. Ready the plank.", "Lower the plank", (50, 10)))
     tasks.append(Task(11, "Is that a real gold doubloon? Bite it and tell me!", "Bite the doubloon", (50, 10)))
     tasks.append(Task(12, "Arrrr, what lies ahead? Break out your telescope\nand tell me what's on the horizon.", "Scan the horizon", (50, 10)))
-    tasks.append(Task(13, "Storm ahead. Best give Davey Jones an offering if we plan to survive.", "Drop offering into the sea", (50, 10)))
+    tasks.append(Task(13, "Storm ahead. Best give Davey Jones\nan offering if we plan to survive.", "Drop offering into the sea", (50, 10)))
     tasks.append(Task(14, "We're out of cannonballs! Fill the cannons with whatever you can find!", "Load cannons with silverware", (50, 10)))
     tasks.append(Task(15, "A brawl be breakin out on the main deck. Silence that lot!", "Stop brawl", (50, 10)))
     tasks.append(Task(16, "That lad has quite a bounty! SEIZE HIM!", "Capture bounty", (50, 10)))
