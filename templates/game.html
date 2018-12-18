@@ -177,12 +177,18 @@
                     this.load.audio('bgsound','bgsound.wav');
                     this.load.audio('arrsound','arr.wav');
                     this.load.audio('failuresound','failure.mp3');
+                    this.load.audio('theme','theme.wav');
+                    this.load.audio('section','section.wav');
+
+
 
                 },
                 create: function () {
                     bg_sound=this.sound.add('bgsound');
                     arr_sound=this.sound.add('arrsound');
                     fail_sound=this.sound.add('failuresound');
+                    theme_sound=this.sound.add('theme');
+                    section_sound=this.sound.add('section');
 
                     background = this.add.tileSprite(450, 324, 900, 648, 'background');
 
@@ -206,6 +212,10 @@
 
 
                     bg_sound.play();
+                    theme_sound.setVolume(0.2);
+                    theme_sound.play();
+
+
 
                     currentID=currentTask['task_id'];
 
@@ -335,7 +345,7 @@
                         boundsAlignV: "middle"
                     });
                     returnToMainText.setOrigin(0.5);
-                    
+
                 }
             };
             game.scene.add("gameOver", gameOver);
@@ -429,7 +439,7 @@
 
             socket.on("section_complete", function(data) {
                 console.log('SECTION COMPLETED');
-
+                section_sound.play();
                 timeLeft = data.taskCompletionTime;
                 taskCompletionTime = data.taskCompletionTime;
 
@@ -460,7 +470,7 @@
                 <h1>How To Play</h1>
                 <p>
                     Pirate Plunder is a game in which you and your teammates try to keep
-                    your ship afloat. Everyone on your team will be given a task that 
+                    your ship afloat. Everyone on your team will be given a task that
                     must be completed within a certain amount of time. Some tasks you
                     can complete, but other tasks you will need to ask your teammates
                     to do.
@@ -468,7 +478,7 @@
                 <p>
                     When you or a teammate completes the task that you have been assigned,
                     you will receive a new task. Completing enough tasks will advance
-                    your team to a new stage, where you will be given an entirely new set 
+                    your team to a new stage, where you will be given an entirely new set
                     of tasks that you can complete!
                 </p>
                 <p>
@@ -476,7 +486,7 @@
                 </p>
                 <p>
                     If you fail to complete a task on time, or if you complete the wrong task,
-                    your ship will take damage. If your ship takes too much damage, it is 
+                    your ship will take damage. If your ship takes too much damage, it is
                     game over....
                 </p>
                 <p>
