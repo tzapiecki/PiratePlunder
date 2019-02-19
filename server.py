@@ -14,6 +14,8 @@ from server_classes.lobby import Lobby
 from server_classes.gameLobby import GameLobby
 from server_classes.player import Player
 
+from server_classes import server_utilities
+
 app = Flask(__name__, static_url_path='')
 # TODO: may need to add secret key
 
@@ -153,6 +155,9 @@ def lobby(lobby_id):
 
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
+
+    # Below is how to run methods from server_utilities
+    #server_utilities.is_room_code_valid()
 
     gameLobby = gameLobbies.get(lobby_id, "no_lobby")
 
