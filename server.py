@@ -154,17 +154,6 @@ def lobby(lobby_id):
 @app.route('/game/<lobby_id>')
 def game(lobby_id):
 
-
-    def is_room_code_valid():
-        """
-        Returns true if <lobby_id> is exclusively alphanumeric characters,
-        false otherwise
-        """
-        pass
-
-
-
-
     gameLobby = gameLobbies.get(lobby_id, "no_lobby")
 
     # If no gameLobby object with that id found, redirect to the staging lobby
