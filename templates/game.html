@@ -222,7 +222,7 @@
                     // Task that appears on top of the screen
                     objectiveTask = this.add.text(200,77,currentTask['description'], taskStyle);
 
-                    timeLeftText = this.add.text(32, 32);
+                    timeLeftText = this.add.text(128, 300, "", {fontSize: "70px"});
 
                     // Task Buttons
                     let buttonTextStyle = {
@@ -269,7 +269,7 @@
                 },
                 update: function () {
                     background.tilePositionX += shipSpeed;
-                    timeLeftText.setText('Time Left: ' + (timeLeft / 1000).toString().substr(0,3));
+                    timeLeftText.setText(Math.ceil(timeLeft / 1000).toString());
 
 
                     if (countdownActive) {
