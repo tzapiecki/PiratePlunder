@@ -114,7 +114,8 @@
             var taskCompletionTime = 10000;
 
             var timeLeft,
-                timeLeftText;
+                timeLeftText,
+                timeLeftArc;
 
             var currentTime;
             var countdownActive = false;
@@ -158,6 +159,22 @@
                     // To make event handlers work properly
                     personalTaskText.set(personalTask["button_text"], pTaskID);
                 }
+            }
+
+            function updateTimerArc(timeLeft, origTimeGiven) {
+                    const timerTextCtr = timeLeftText.getCenter();
+                    const arcRadius = 100;
+                    timeLeftArc.clear();
+                    //draw red bg
+                    timeLeftArc.fillStyle(0x000000, 0.4);
+                    timeLeftArc.fillCircle(timerTextCtr.x, timerTextCtr.y, arcRadius);
+
+                    //draw timer arc
+                    timeLeftArc.lineStyle(arcRadius, 0xFF3333, 1);
+                    timeLeftArc.beginPath();
+                    const toDeg = 270 - 360*(timeLeft/origTimeGiven);
+                    timeLeftArc.arc(timerTextCtr.x, timerTextCtr.y, arcRadius/2, Phaser.Math.DegToRad(-90), Phaser.Math.DegToRad(toDeg), true);
+                    timeLeftArc.strokePath();
             }
 
             var main = function () {};
@@ -222,7 +239,9 @@
                     // Task that appears on top of the screen
                     objectiveTask = this.add.text(200,77,currentTask['description'], taskStyle);
 
-                    timeLeftText = this.add.text(128, 300, "", {fontSize: "70px"});
+                    timeLeftArc = this.add.graphics();
+                    timeLeftText = this.add.text(160, 300, "", {fontSize: "90px", align: "center", fontFamily: "Arial"});
+                    timeLeftText.setOrigin(0.5);
 
                     // Task Buttons
                     let buttonTextStyle = {
@@ -271,6 +290,7 @@
                     background.tilePositionX += shipSpeed;
                     timeLeftText.setText(Math.ceil(timeLeft / 1000).toString());
 
+                    updateTimerArc(timeLeft, taskCompletionTime);
 
                     if (countdownActive) {
                         timeLeft -= this.time.now - prevTime;
