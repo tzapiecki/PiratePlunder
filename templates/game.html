@@ -117,6 +117,8 @@
                 timeLeftText,
                 timeLeftArc;
 
+            var redFlashOverlay;
+
             var currentTime;
             var countdownActive = false;
 
@@ -175,6 +177,14 @@
                     const toDeg = 270 - 360*(timeLeft/origTimeGiven);
                     timeLeftArc.arc(timerTextCtr.x, timerTextCtr.y, arcRadius/2, Phaser.Math.DegToRad(-90), Phaser.Math.DegToRad(toDeg), true);
                     timeLeftArc.strokePath();
+            }
+
+            function updateRedOverlay(timeLeftMS) {
+                if(timeLeft > 4000) {
+                    redFlashOverlay.setAlpha(0);
+                } else {
+                    redFlashOverlay.setAlpha(0.4*(Math.sin((4000-timeLeftMS)/100) + 1))
+                }
             }
 
             var main = function () {};
@@ -279,6 +289,9 @@
                         })
                     }
 
+                    redFlashOverlay = this.add.rectangle(0, 0, game.canvas.width, game.canvas.height, 0xFF0000, 0.3);
+                    redFlashOverlay.setOrigin(0);
+
                     updateButtonTexts(personalTasks);
                     bg_sound.play();
 
@@ -291,6 +304,7 @@
                     timeLeftText.setText(Math.ceil(timeLeft / 1000).toString());
 
                     updateTimerArc(timeLeft, taskCompletionTime);
+                    updateRedOverlay(timeLeft);
 
                     if (countdownActive) {
                         timeLeft -= this.time.now - prevTime;
