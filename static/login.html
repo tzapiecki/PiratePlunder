@@ -8,6 +8,8 @@
         <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet"> 
         <link href="style.css" rel="stylesheet">
 
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
         <style>
             #instructionsButton {
                 position: absolute;
@@ -132,8 +134,37 @@
 
             submitButton.onclick = function () {
                 let lobbyID = encodeURIComponent(roomCodeInput.value.trim());
+                
                 if (lobbyID.length > 0) {
-                    window.location.href = "/lobby/" + lobbyID;
+
+                    $.ajax({
+                        url: window.location.href + "/verify_input",
+                        method: 'POST',
+                        data: { 'roomcode': lobbyID },
+
+                        success: function(data) {
+
+                            console.log("Room code status received");
+
+                            if (data.hasOwnProperty("error")) {
+
+                                console.log(data['error']);
+                            }
+
+                            if (data.hasOwnProperty("approved")) {
+
+                                if (data['approved']) {
+
+                                    console.log('room code approved!');
+                                    window.location.href = "/lobby/" + lobbyID;
+                                }
+                                else {
+
+                                    console.log('bad room code');
+                                }
+                            }
+                        }
+                    });
                 }
             };
 

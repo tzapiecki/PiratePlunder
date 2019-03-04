@@ -5,6 +5,7 @@ using SocketIO
 Written by Gabriel Brown and Trevor Zapiecki
 """
 import json
+import re
 
 from flask import Flask, render_template, make_response, request, redirect, jsonify
 from flask_socketio import SocketIO, emit
@@ -42,6 +43,39 @@ Routes to new pages
 def index():
 
     return app.send_static_file('login.html')
+
+
+"""
+Verifies user inputted room codes
+"""
+@app.route('/verify_input', methods=['POST'])
+def verify_input():
+
+    response = {}
+
+    try:
+        user_input = request.form['roomcode']
+
+        regex = re.compile('^[a-zA-Z0-9]+$')
+        match = regex.match(user_input)
+
+        if match == None:
+
+            matches = False
+
+        else:
+
+            matches = True
+
+
+        response["approved"] = matches
+
+    except KeyError as e:
+        
+        print(e)
+        response["error"] = "The key 'roomcode' wasn't included in the request"
+
+    return jsonify(response)
 
 
 @app.route('/lobby/<lobby_id>', methods=['GET', 'POST'])
