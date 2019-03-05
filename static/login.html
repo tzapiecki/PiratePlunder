@@ -73,6 +73,7 @@
             </div>
             <div>
                 <p>Enter a room code for your team</p>
+                <p> <b id='authMessage'>  </b> </p> 
                 <input class="roomCode" type="text" placeholder="Room Code" maxlength="25">
                 <button class="submitButton">Join Lobby</button>
             </div>
@@ -118,6 +119,10 @@
                 submitButton = document.querySelector('#loginPage .submitButton');
 
             var checkRoomCodeValidity = function () {
+                // Remove the authMessage on change
+                document.getElementById('authMessage').innerHTML = ''
+
+                // Enable or disable button based on length of code
                 if (roomCodeInput.value.trim().length > 0){
                     submitButton.disabled = false;
                 }
@@ -125,12 +130,25 @@
                     submitButton.disabled = true;
                 }
             }
+
+            function isRoomCodeValid (code) {
+                if(/^[a-zA-Z0-9]+$/.test(code)) return true;
+                else return false;
+            }
+
             roomCodeInput.onchange = checkRoomCodeValidity;
             roomCodeInput.onkeydown = checkRoomCodeValidity;
             roomCodeInput.onkeyup = checkRoomCodeValidity;
             roomCodeInput.onpaste = checkRoomCodeValidity;
 
             submitButton.onclick = function () {
+                // If the room code is not valid, do NOT move on, and 
+                // set the authMessage to inform the user
+                if (!isRoomCodeValid(roomCodeInput.value.trim())) {
+                    document.getElementById('authMessage').innerHTML = 'Room code contains invalid characters'
+                    return;
+                }
+
                 let lobbyID = encodeURIComponent(roomCodeInput.value.trim());
                 if (lobbyID.length > 0) {
                     window.location.href = "/lobby/" + lobbyID;
