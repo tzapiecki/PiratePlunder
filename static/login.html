@@ -131,6 +131,11 @@
                 }
             }
 
+            /* 
+             * isRoomCodeValid verifies that the user entered code does not contain not accepted characters.
+             * @param code: the user entered code
+             * @returns a boolean -> true if valid, false if not valid
+             */
             function isRoomCodeValid (code) {
                 if(/^[a-zA-Z0-9]+$/.test(code)) return true;
                 else return false;
