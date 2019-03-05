@@ -2,12 +2,42 @@
 <html>
 <head>
     <title>Tests</title>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
     <script type="text/javascript">
         
-        alert("Time to test!");
+        // -----Integration tests-----
+
+        console.log('======================TESTS=========================');
+
+        // Room code verification
+        console.log('1. Server handles POST requests to /verify_input and returns a json object with the key "approved"');
+        $.ajax({
+
+            url: window.location.protocol + "/verify_input",
+            method: 'POST',
+            data: {'roomcode': "abc"},
+
+            success: function(data) {
+
+                if (data.hasOwnProperty("approved")) {
+
+                    console.log('PASSED');
+                }
+                else {
+
+                    console.log("FAILED: return object doesn't have key 'approved'");
+                }
+            },
+            error: function() {
+
+                console.log("FAILED: server doesn't handle route correctly");
+            }
+
+        });
 
 
     </script>
