@@ -72,6 +72,17 @@
 
             updateLobbyMembers();
         </script>
+        <script>
+        var colors = ["#c96cc3", "#557fe8", "#49a36e", "#fdab5e"];
+        var colorIndex = 0;
+        function myFunction() {
+            if( colorIndex >= colors.length ) {
+            colorIndex = 0;
+            }
+            document.body.style.backgroundColor = colors[colorIndex];
+            colorIndex++;
+        }
+        </script>
 
         <style>
             #instructionsButton {
@@ -132,10 +143,13 @@
     </head>
 
     <body>
+    <button onclick="myFunction();">Change color</button>
         <div id="lobbyPage">
             <button class="backButton" onclick="window.location.href = '/';">⬅</button>
             <div class="title">
                 <label>{{ lobby_id }}</label>
+                <label>-</label>
+                <label>{{ username }}</label>
             </div>
 
             <div class="lobbyMembers"></div>
