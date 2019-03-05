@@ -39,15 +39,20 @@ gameLobbies = {}
 """
 Routes to new pages
 """
+
+# Main page
 @app.route('/')
 def index():
 
     return app.send_static_file('login.html')
 
+# Runs all the tests involving server requests
+@app.route('/test')
+def test():
 
-"""
-Verifies user inputted room codes
-"""
+    return app.send_static_file('tests.html')
+
+# Makes sure a room code string is valid
 @app.route('/verify_input', methods=['POST'])
 def verify_input():
 
