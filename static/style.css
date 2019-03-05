@@ -9,7 +9,7 @@
 =======  LOGIN PAGE  =======
 ****************************/
 #loginPage form {
-    margin-top: 2rem;
+    margin-top: 6rem;
 }
 
 #loginPage .title {
@@ -47,32 +47,6 @@
 }
 
 #loginPage .roomCode::placeholder {
-    color: #a4a4b3;
-    opacity: 1;
-}
-
-#loginPage div p {
-    font-family: 'Signika', sans-serif;
-    font-size: 2rem;
-    text-align: center;
-    color: #111111;
-}
-
-#loginPage .Name {
-    font-family: 'Sedgwick Ave', cursive;
-    font-size: 3rem;
-    height: 4.75rem;
-    width: 27rem;
-    text-align: center;
-    display: block;
-    margin: auto;
-    background-color: #353535;
-    border: none;
-    border-radius: 3px;
-    color: white;
-}
-
-#loginPage .Name::placeholder {
     color: #a4a4b3;
     opacity: 1;
 }

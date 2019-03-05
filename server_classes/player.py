@@ -7,18 +7,13 @@ import uuid
 
 class Player:
 
-    def __init__(self, user_id="", username=""):
+    def __init__(self, user_id=""):
         """Constructor for player object. If no user_id is passed in, generate a new one"""
 
         if user_id == "":
             self.user_id = str(uuid.uuid4())
         else:
             self.user_id = user_id
-
-        if username == "":
-            self.username = "Anonymous"
-        else:
-            self.username = username
 
     def __eq__(self, obj):
 

@@ -8,18 +8,6 @@
         <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Sedgwick+Ave|Signika" rel="stylesheet"> 
         <link href="style.css" rel="stylesheet">
 
-        <script>
-        var colors = ["#c96cc3", "#557fe8", "#49a36e", "#fdab5e"];
-        var colorIndex = 0;
-        function myFunction() {
-            if( colorIndex >= colors.length ) {
-            colorIndex = 0;
-            }
-            document.body.style.backgroundColor = colors[colorIndex];
-            colorIndex++;
-        }
-        </script>
-
         <style>
             #instructionsButton {
                 position: absolute;
@@ -27,7 +15,6 @@
                 right: 2rem;
                 height: 3rem;
             }
-
             #instructionsButton:hover {
                 cursor: pointer;
             }
@@ -79,8 +66,6 @@
         </style>
     </head>
     <body>
-    <button onclick="myFunction();">Change color</button>
-
         <div id=loginPage>
             <div class="title">
                 <label>Pirate</label>
@@ -131,9 +116,6 @@
         <script>
             var roomCodeInput = document.querySelector('#loginPage .roomCode'),
                 submitButton = document.querySelector('#loginPage .submitButton');
-
-
-
 
             var checkRoomCodeValidity = function () {
                 if (roomCodeInput.value.trim().length > 0){
